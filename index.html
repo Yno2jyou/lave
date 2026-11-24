@@ -100,10 +100,9 @@ footer span,footer a{display:block;min-width:0;white-space:normal}
 .node span{font-family:'Noto Serif JP',serif;font-size:.95rem}
 @media(max-width:820px){
  .reader{display:block;position:relative}
- .stage{position:fixed;inset:0;height:100vh;padding:0;z-index:0}
- .canvas{opacity:.42}.scene .big,.scene .cap,.scene .tone{display:none}.rcpt{display:none}
+ .stage{display:none}
  :root{--fs:14px}
- .text{position:relative;z-index:1;padding:14vh 28px 16vh;background:linear-gradient(rgba(253,252,248,.82),rgba(253,252,248,.82))}
+ .text{position:relative;z-index:1;padding:0 28px 16vh;background:var(--paper)}
  .prose p,.chap p{line-height:2}
  .prose .chap h2{font-size:1.3rem;margin-bottom:1.4rem}
  .chap .no{font-size:.9rem}
@@ -116,7 +115,7 @@ footer span,footer a{display:block;min-width:0;white-space:normal}
  .node{position:relative!important;left:auto!important;top:auto!important;display:block;margin:10px 0;max-width:none;border-radius:16px}
  .nodes{min-height:0}
 }
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.chap p{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.chap p{opacity:1;transform:none}.door>*{opacity:1!important}.door>*:not(.rcpt){transform:none!important}}
 .modal{position:fixed;inset:0;z-index:80;background:rgba(10,8,6,.92);display:none;align-items:center;justify-content:center;padding:4vw}
 .modal.open{display:flex}
 .modal .box{width:min(960px,100%);height:min(70vh,640px);position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:3rem;color:#f5eee2;background:var(--g)}
@@ -141,6 +140,30 @@ body.editing .chap p{opacity:1!important;transform:none!important}
 body.editing .chdel{display:inline-block}
 body.editing .chdel:hover{border-color:var(--bronze);background:#fff}
 body.editing .portal h1{outline:none!important;background:none!important;cursor:text}
+/* 章扉（モバイルのみ表示） */
+.door{display:none}
+@media(max-width:820px){
+ .door{display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;color:#f5eee2;min-height:100vh;min-height:100svh;margin:0 -28px 7vh;padding:28px 28px 12vh}
+ .door::before{content:"";position:absolute;inset:0;background:var(--g)}
+ .door::after{content:"";position:absolute;inset:0;opacity:.22;mix-blend-mode:overlay;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+ .door>*{position:relative;z-index:1;opacity:0;transition:opacity 1.2s ease}
+ .door>*:not(.rcpt){transform:translateY(16px);transition:opacity 1.2s ease,transform 1.2s ease}
+ .door.in>*{opacity:1}
+ .door.in>*:not(.rcpt){transform:none}
+ .door .big{position:absolute;top:6vh;right:6vw;font-family:'Playfair Display',serif;font-size:min(46vw,220px);line-height:1;opacity:0;margin:0}
+ .door.in .big{opacity:.16}
+ .door .tone{font-size:11px;letter-spacing:.35em;text-transform:uppercase;margin-bottom:.8rem}
+ .door.in .tone{opacity:.65}
+ .door .kw{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.6rem,7vw,2.2rem);line-height:1.2}
+ .door .cap{margin-top:.8rem;max-width:20rem;font-family:'Noto Serif JP',serif;font-weight:300;font-size:.85rem;line-height:1.95}
+ .door.in .cap{opacity:.88}
+ .door .rcpt{top:42%;width:min(280px,74%)}
+ body.editing .door>*{opacity:1!important}
+ body.editing .door>*:not(.rcpt){transform:none!important}
+ body.editing .door .big{opacity:.3!important}
+ body.editing .door [data-d]{outline:1px dashed rgba(245,238,226,.55);outline-offset:4px}
+ body.editing .door [data-d]:focus{background:rgba(255,255,255,.12);outline-color:#fff}
+}
 /* stage edit */
 .scene{pointer-events:none}.scene.on{pointer-events:auto}
 body.editing .scene [data-s]{outline:1px dashed rgba(245,238,226,.55);outline-offset:4px;cursor:text}
@@ -441,7 +464,7 @@ const S=[
  {k:'Embers',t:'Remains',c:'消えないまま燻り続ける、胸の奥の残火。',g:G.ember,n:'火'},
  {k:'Nabe, November',t:'Confession',c:'曇った窓。滑り落ちる一枚のレシート。',g:G.steam,n:'鍋'},
  {k:'The second floor',t:'Dust & light',c:'急な階段、乾いた紙の匂い、AMラジオのざらつき。',g:G.amber,n:'階'},
- {k:'12:59',t:'Receipt',c:'ある土曜日の、ある店の、ある金額。',g:G.paper,n:'票',r:1},
+ {k:'12:59',t:'Receipt',c:'ある土曜日の、ある店の、ある金額。',g:G.paper,n:'票'},
  {k:'Lyon',t:'Distance',c:'時差、絆創膏、間遠になるメッセージ。',g:G.slate,n:'離'},
  {k:'13:27',t:'Signal',c:'カーキ色の後ろ姿。アカウント名がすべてを告げる。',g:G.khaki,n:'信'},
  {k:'Shibuya, again',t:'Convergence',c:'春の風、横断歩道、色だけが違う一人。',g:G.khaki,n:'再'}
@@ -457,6 +480,19 @@ function buildScenes(){
    d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-s="t">${esc(s.t)}</span></div><div class="kw" data-s="k">${nl(s.k)}</div><div class="cap" data-s="c">${nl(s.c)}</div>`;cv.appendChild(d)});
   scenes=[...cv.children];
   const k=cur;cur=-1;setScene(k<0?0:k);
+  syncDoors();
+}
+/* モバイル用の章扉：各章の冒頭に、対応する場面をカードとして差し込む */
+function syncDoors(){
+  document.querySelectorAll('#prose .chap').forEach((c,i)=>{
+    const old=c.querySelector(':scope>.door');if(old)old.remove();
+    const s=S[i];if(!s)return;
+    const d=document.createElement('div');d.className='door';d.dataset.i=i;d.style.setProperty('--g',s.g);
+    d.innerHTML=`<div class="big" data-d="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-d="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-d="t">${esc(s.t)}</span></div><div class="kw" data-d="k">${nl(s.k)}</div><div class="cap" data-d="c">${nl(s.c)}</div>`;
+    if(document.body.classList.contains('editing'))d.querySelectorAll('[data-d]').forEach(el=>{el.setAttribute('contenteditable','true');el.spellcheck=false});
+    c.insertBefore(d,c.firstChild);
+    (window._dio=window._dio||new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');window._dio.unobserve(e.target)}}),{threshold:.3})).observe(d);
+  });
 }
 function setScene(i){if(i===cur)return;cur=i;scenes.forEach((e,j)=>e.classList.toggle('on',j===i))}
 buildScenes();
@@ -513,7 +549,7 @@ function say(t){est.textContent=t}
 function editables(on){
   document.querySelectorAll(EDIT_SEL).forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
   prose.querySelectorAll('h2,p').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
-  document.querySelectorAll('.scene [data-s]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
+  document.querySelectorAll('.scene [data-s],.door [data-d]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
 }
 const CH_SEL='#prose .chap';
 const ROMAN=[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
@@ -526,7 +562,7 @@ function decorate(){
     b.onclick=()=>{
       if(document.querySelectorAll(CH_SEL).length<=1){say('最後の一章は削除できません');return}
       if(!confirm('この章を削除しますか？'))return;
-      c.remove();renumber();say('章を削除しました（保存で確定）');
+      c.remove();renumber();syncDoors();say('章を削除しました（保存で確定）');
     };
     c.insertBefore(b,c.firstChild);
   });
@@ -535,7 +571,7 @@ function undecorate(){document.querySelectorAll('.chdel').forEach(b=>b.remove())
 function addChapter(){
   const s=document.createElement('section');s.className='chap';
   s.innerHTML='<div class="no"></div><h2>新しい章</h2><p>本文を入力してください。</p>';
-  prose.appendChild(s);renumber();decorate();watchProse();
+  prose.appendChild(s);renumber();syncDoors();decorate();watchProse();
   const h=s.querySelector('h2');h.setAttribute('contenteditable','true');h.spellcheck=false;h.focus();
   say('章を追加しました（保存で確定）');
 }
@@ -569,6 +605,7 @@ function applyScenes(list,rebuild){
   if(!Array.isArray(list))return;
   list.slice(0,S.length).forEach((v,i)=>{['k','c','t','n'].forEach(f=>{if(v&&v[f])S[i][f]=v[f]});if(v&&v.rh)S[i].rh=v.rh});
   if(rebuild){buildScenes();if(document.body.classList.contains('editing'))editables(true)}
+  syncDoors();
   buildGallery();
 }
 /* 保存済みデータに、最新の構成変更（第XIII章の統合・第X/XI章の段落移動）を優先して適用する。何度適用しても結果は同じ */
@@ -614,7 +651,7 @@ function applyContent(c){
   if(Array.isArray(c.chapters)&&c.chapters.length){
     const chs=migrateChapters(c.chapters);
     prose.innerHTML=chs.map(ch=>`<section class="chap"><div class="no"></div><h2>${ch.title||''}</h2>${(ch.paragraphs||[]).map(p=>`<p class="${p.cls||''}">${p.html||''}</p>`).join('')}</section>`).join('');
-    renumber();watchProse();
+    renumber();syncDoors();watchProse();
   }
 }
 /* 書式を持ち込まない：貼り付けはプレーンテキスト、太字・斜体などのショートカットも無効 */
@@ -626,7 +663,8 @@ addEventListener('paste',e=>{
   if(!el)return;
   e.preventDefault();
   const raw=((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\r\n?/g,'\n');
-  if(el.dataset&&(el.dataset.s==='rh'||el.dataset.s==='k'||el.dataset.s==='c')){
+  const fk=el.dataset&&(el.dataset.s||el.dataset.d);
+  if(fk==='rh'||fk==='k'||fk==='c'){
     document.execCommand('insertHTML',false,esc(raw.replace(/\n+$/,'')).replace(/\n/g,'<br>'));return;
   }
   const isBody=el.tagName==='P'&&prose.contains(el);
@@ -654,6 +692,17 @@ addEventListener('paste',e=>{
   prev.appendChild(frag);
   const rr=document.createRange();rr.setStart(node,node.length);rr.collapse(true);
   const sl=getSelection();sl.removeAllRanges();sl.addRange(rr);
+});
+/* 右側の場面と章扉の編集を相互に同期 */
+addEventListener('input',e=>{
+  const el=e.target.closest&&e.target.closest('[data-s],[data-d]');if(!el)return;
+  const host=el.closest('.scene,.door');if(!host)return;
+  const f=el.dataset.s||el.dataset.d,isDoor=host.classList.contains('door');
+  const i=isDoor?+host.dataset.i:scenes.indexOf(host);
+  if(!(i>=0)||!S[i])return;
+  S[i][f]=f==='rh'?el.innerHTML:elText(el).trim();
+  const other=isDoor?(scenes[i]&&scenes[i].querySelector(`[data-s="${f}"]`)):document.querySelector(`.door[data-i="${i}"] [data-d="${f}"]`);
+  if(other)other.innerHTML=f==='rh'?el.innerHTML:(f==='k'||f==='c')?nl(S[i][f]):esc(S[i][f]);
 });
 /* 保存時：本文・章タイトルに紛れた書式（span/font/style等）を取り除く */
 function cleanHTML(h){
