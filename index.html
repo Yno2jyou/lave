@@ -559,12 +559,49 @@ function applyScenes(list,rebuild){
   if(rebuild){buildScenes();if(document.body.classList.contains('editing'))editables(true)}
   buildGallery();
 }
+/* 保存済みデータに、最新の構成変更（第XIII章の統合・第X/XI章の段落移動）を優先して適用する。何度適用しても結果は同じ */
+const END_P=[
+ {cls:'',html:'カーキ色の袖が、風に揺れていた。陽の光のなかで、彼女の言葉は凛として澄んでいた。あの日から、どれくらいの時間が経っただろう。どれほどの想いが胸にあふれ、やがてついえていっただろう。しかしそれでもついえなかった想いは、確かにあった。消えずに、灯り続けた想いがあった。きっと今なら胸を張って、その想いを伝えられるはずだ。何度も迷い、戸惑い、そして心に閉ざしてきたあの言葉を、今なら、きっと──。'},
+ {cls:'',html:'運命の予感をたっぷりと含んだ空気を、胸いっぱいに吸い込む。そして僕は在りし日の記憶を告げるように、そっと口を開く。'},
+ {cls:'fin',html:'──ジェラール・フィリップは洗われた、と。'}
+];
+const MOVE_P=[
+ {cls:'',html:'その人は今、どこにいるのだろう、と僕は考えた。今も渋谷の近くに住んでいるのかもしれないし、あるいはフユのようにまったく別の知らない街に住んでいるのかもしれない。あのジャケットはまだクローゼットに残っているだろうか。それとももう処分してしまったのだろうか。この本を売ったのはいつだったのか。どんな気持ちで古本屋に持って行ったのか。あるいは売ったこと自体をもう覚えていないのかもしれない。レシートが挟まったままだったことにも最後まで気づかなかった可能性もある。そう考えると、この小さな紙切れだけが、今もその人から切り離されずに残っているのだ。'},
+ {cls:'',html:'レシートはまだ手元にある。紙は少し柔らかくなり、端も少し丸くなったが、印字は今でも読める。二〇二一年二月十三日、土曜日、十二時五十九分。A.P.C。COTON MILITAIRE LAVE。五万五千円。クレジット。そこには、ただそれだけが記録されている。名前も、顔も知らない誰かが、ある土曜日に渋谷で服を買い、そのあとこの本を読んでいた。そして栞に、レシートを用いた。その事実だけで、世界は今以上にクリアに見えた。秋の夕方や、雨が降り出す少し前みたいな時間に、僕はたまにその本を本棚から取り出すのだろう。そしてレシートを眺めながら、その人のことを考えるのだろう。'}
+];
+function migrateChapters(src){
+  const chs=src.map(c=>({title:c.title||'',paragraphs:(c.paragraphs||[]).map(p=>({cls:p.cls||'',html:p.html||''}))}));
+  const plain=h=>String(h).replace(/<[^>]*>/g,'').trim();
+  const find=(re,fb)=>{const i=chs.findIndex(c=>re.test(plain(c.title)));return i>=0?i:(chs.length>=12?fb:-1)};
+  /* ① 旧・第XIII章を取り除き、第XII章の結びを最新の文章にする */
+  const iL=chs.findIndex(c=>plain(c.title)==='洗われた、と');
+  if(iL>=0)chs.splice(iL,1);
+  const iS=find(/渋谷、十二時五十九分/,11);
+  if(iS>=0){
+    const ps=chs[iS].paragraphs;
+    if(!ps.some(p=>plain(p.html).startsWith('カーキ色の袖が、風に揺れていた')))END_P.forEach(p=>ps.push({...p}));
+  }
+  /* ② 「その人は今、…」「レシートはまだ手元に…」を第X章の末尾へ */
+  const iR=find(/リヨン/,9);
+  if(iR>=0){
+    const keys=['その人は今、どこにいるのだろう','レシートはまだ手元にある'];
+    const moved=keys.map(k=>{
+      let hit=null;
+      chs.forEach((c,ci)=>{if(ci===iR||hit)return;const j=c.paragraphs.findIndex(p=>plain(p.html).startsWith(k));if(j>=0)hit=c.paragraphs.splice(j,1)[0]});
+      return hit;
+    });
+    const tail=chs[iR].paragraphs;
+    keys.forEach((k,n)=>{if(!tail.some(p=>plain(p.html).startsWith(k)))tail.push(moved[n]||{...MOVE_P[n]})});
+  }
+  return chs;
+}
 function applyContent(c){
   if(!c)return;
   applyScenes(c.scenes,true);
   document.querySelectorAll(EDIT_SEL).forEach(el=>{const v=c[el.dataset.edit];if(typeof v==='string'&&v)el.innerHTML=v});
   if(Array.isArray(c.chapters)&&c.chapters.length){
-    prose.innerHTML=c.chapters.map(ch=>`<section class="chap"><div class="no"></div><h2>${ch.title||''}</h2>${(ch.paragraphs||[]).map(p=>`<p class="${p.cls||''}">${p.html||''}</p>`).join('')}</section>`).join('');
+    const chs=migrateChapters(c.chapters);
+    prose.innerHTML=chs.map(ch=>`<section class="chap"><div class="no"></div><h2>${ch.title||''}</h2>${(ch.paragraphs||[]).map(p=>`<p class="${p.cls||''}">${p.html||''}</p>`).join('')}</section>`).join('');
     renumber();watchProse();
   }
 }
