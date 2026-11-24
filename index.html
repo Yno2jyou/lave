@@ -578,8 +578,11 @@ async function doLogin(){
       lmsg.style.color='#a33';lmsg.textContent='このアカウントには管理権限がありません';
     }
   }catch(e){
+    console.error(e);
     lmsg.style.color='#a33';
-    lmsg.textContent=(e.code==='auth/too-many-requests')?'試行回数が多すぎます。しばらくしてからお試しください':'メールアドレスまたはパスワードが正しくありません';
+    lmsg.textContent=(e.code==='auth/too-many-requests')
+      ?'試行回数が多すぎます。しばらくしてからお試しください'
+      :'ログインできません（'+(e.code||'unknown')+'）';
   }finally{lgo.disabled=false;lpass.value=''}
 }
 lgo.onclick=doLogin;
