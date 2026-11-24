@@ -129,6 +129,10 @@ body.editing .chap p{opacity:1!important;transform:none!important}
 body.editing .chdel{display:inline-block}
 body.editing .chdel:hover{border-color:var(--bronze);background:#fff}
 body.editing .portal h1{outline:none!important;background:none!important;cursor:text}
+/* stage edit */
+.scene{pointer-events:none}.scene.on{pointer-events:auto}
+body.editing .scene [data-s]{outline:1px dashed rgba(245,238,226,.55);outline-offset:4px;cursor:text}
+body.editing .scene [data-s]:focus{background:rgba(255,255,255,.12);outline-color:#fff}
 /* login */
 .login{position:fixed;inset:0;z-index:100;background:rgba(10,8,6,.94);display:none;align-items:center;justify-content:center;padding:4vw}
 .login.open{display:flex}
@@ -443,13 +447,18 @@ const S=[
 ];
 const T=S.map(s=>[s.n,s.k]);
 const cv=document.getElementById('canvas');
-const rc=`<div class="rcpt"><b>A.P.C</b>渋谷区宇田川町15-1 パルコ2F<hr>2021/02/13（土）12:59<br>COTON MILITAIRE LAVE<br>単価 ¥55,000<hr>決済 クレジット</div>`;
-S.forEach((s,i)=>{const d=document.createElement('div');d.className='scene';d.style.setProperty('--g',s.g);
- d.innerHTML=`<div class="big">${s.n}</div>${s.r?rc:''}<div class="tone">${String(i+1).padStart(2,'0')} · ${s.t}</div><div class="kw">${s.k}</div><div class="cap">${s.c}</div>`;cv.appendChild(d)});
-const scenes=[...cv.children];
-let cur=-1;
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const RC_DEF=`<b>A.P.C</b>渋谷区宇田川町15-1 パルコ2F<hr>2021/02/13（土）12:59<br>COTON MILITAIRE LAVE<br>単価 ¥55,000<hr>決済 クレジット`;
+let scenes=[],cur=-1;
+function buildScenes(){
+  cv.innerHTML='';
+  S.forEach((s,i)=>{const d=document.createElement('div');d.className='scene';d.style.setProperty('--g',s.g);
+   d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-s="t">${esc(s.t)}</span></div><div class="kw" data-s="k">${esc(s.k)}</div><div class="cap" data-s="c">${esc(s.c)}</div>`;cv.appendChild(d)});
+  scenes=[...cv.children];
+  const k=cur;cur=-1;setScene(k<0?0:k);
+}
 function setScene(i){if(i===cur)return;cur=i;scenes.forEach((e,j)=>e.classList.toggle('on',j===i))}
-setScene(0);
+buildScenes();
 const prose=document.getElementById('prose');
 const po=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');po.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
 function watchProse(){prose.querySelectorAll('p').forEach(p=>po.observe(p))}
@@ -462,16 +471,18 @@ addEventListener('resize',onScroll);
 onScroll();
 /* gallery */
 const gi=[0,1,3,5,7,10,11];const gr=document.getElementById('grid');
-gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k+1);b.style.setProperty('--g',s.g);
- b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${s.t.toUpperCase()}</small><i>${s.k}</i></span>`;
+function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k+1);b.style.setProperty('--g',s.g);
+ b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}</small><i>${esc(s.k)}</i></span>`;
  b.onclick=()=>{document.getElementById('mbox').style.setProperty('--g',s.g);document.getElementById('mh').textContent=s.k;document.getElementById('mp').textContent=s.c;document.getElementById('modal').classList.add('open')};
- gr.appendChild(b)});
+ gr.appendChild(b)})}
+buildGallery();
 /* map */
 const pos=[[4,6],[28,2],[55,8],[78,3],[12,26],[40,22],[68,28],[6,50],[32,46],[60,52],[82,44],[20,72],[56,76]];
 const nd=document.getElementById('nodes');nd.style.minHeight='620px';
-T.forEach((t,i)=>{const b=document.createElement('button');b.className='node';b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
- b.innerHTML=`<small>${t[0]} · ${S[i].t}</small><span>${t[1]}</span>`;
- b.onclick=()=>{closeMap();const ps=prose.querySelectorAll('p');const idx=Math.min(ps.length-1,Math.floor(i*ps.length/S.length));(ps[idx]||prose).scrollIntoView({block:'center'})};nd.appendChild(b)});
+function buildMap(){nd.innerHTML='';S.map(s=>[s.n,s.k]).forEach((t,i)=>{const b=document.createElement('button');b.className='node';b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
+ b.innerHTML=`<small>${esc(t[0])} · ${esc(S[i].t)}</small><span>${esc(t[1])}</span>`;
+ b.onclick=()=>{closeMap();const ps=prose.querySelectorAll('p');const idx=Math.min(ps.length-1,Math.floor(i*ps.length/S.length));(ps[idx]||prose).scrollIntoView({block:'center'})};nd.appendChild(b)})}
+buildMap();
 function openMap(){document.getElementById('map').classList.add('open')}
 function closeMap(){document.getElementById('map').classList.remove('open')}
 addEventListener('keydown',e=>{if(e.key==='Escape'){closeMap();closeLogin();document.getElementById('modal').classList.remove('open')}});
@@ -505,6 +516,7 @@ function say(t){est.textContent=t}
 function editables(on){
   document.querySelectorAll(EDIT_SEL).forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
   prose.querySelectorAll('h2,p').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
+  document.querySelectorAll('.scene [data-s]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
 }
 const CH_SEL='#prose .chap';
 const ROMAN=[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
@@ -537,10 +549,24 @@ function collect(){
     title:(c.querySelector('h2')||{}).innerHTML||'',
     paragraphs:[...c.querySelectorAll('p')].map(p=>({cls:p.className.replace(/\bin\b/g,'').replace(/\s+/g,' ').trim(),html:p.innerHTML}))
   }));
+  o.scenes=scenes.map(d=>{
+    const g=k=>{const e=d.querySelector(`[data-s="${k}"]`);return e?e.textContent.trim():''};
+    const r=d.querySelector('[data-s="rh"]');
+    const v={k:g('k'),c:g('c'),t:g('t'),n:g('n')};
+    if(r)v.rh=r.innerHTML;
+    return v;
+  });
   return o;
+}
+function applyScenes(list,rebuild){
+  if(!Array.isArray(list)||list.length!==S.length)return;
+  list.forEach((v,i)=>{['k','c','t','n'].forEach(f=>{if(v&&v[f])S[i][f]=v[f]});if(v&&v.rh)S[i].rh=v.rh});
+  if(rebuild){buildScenes();if(document.body.classList.contains('editing'))editables(true)}
+  buildGallery();buildMap();
 }
 function applyContent(c){
   if(!c)return;
+  applyScenes(c.scenes,true);
   document.querySelectorAll(EDIT_SEL).forEach(el=>{const v=c[el.dataset.edit];if(typeof v==='string'&&v)el.innerHTML=v});
   if(Array.isArray(c.chapters)&&c.chapters.length){
     prose.innerHTML=c.chapters.map(ch=>`<section class="chap"><div class="no"></div><h2>${ch.title||''}</h2>${(ch.paragraphs||[]).map(p=>`<p class="${p.cls||''}">${p.html||''}</p>`).join('')}</section>`).join('');
@@ -553,8 +579,11 @@ function exitEdit(){document.body.classList.remove('editing');editables(false);u
 async function saveEdit(){
   say('保存中…');
   try{
-    await TEXT_DOC.set(collect());
-    say('保存しました');setTimeout(exitEdit,900);
+    const data=collect();
+    await TEXT_DOC.set(data);
+    snap=data;
+    applyScenes(data.scenes,false);
+    say('保存しました（「やめる」で管理パネルを閉じます）');
   }catch(e){
     say(e.code==='permission-denied'?'権限がありません。再ログインしてください':'保存できませんでした（'+(e.code||'通信エラー')+'）');
   }
