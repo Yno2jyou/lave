@@ -121,6 +121,7 @@ footer span,footer a{display:block;min-width:0;white-space:normal}
 .modal.open{display:flex}
 .modal .box{width:min(960px,100%);height:min(70vh,640px);position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:3rem;color:#f5eee2;background:var(--g)}
 .modal .box p{max-width:30rem;font-family:'Noto Serif JP',serif;font-weight:300;line-height:2;margin-top:1rem}
+.modal h4,.modal .box p{white-space:pre-line}
 .modal h4{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(2rem,4vw,3.4rem)}
 .modal button{position:absolute;top:16px;right:16px;border:1px solid #fff5;padding:.5rem 1rem;font-size:12px;letter-spacing:.2em}
 /* edit mode */
@@ -447,12 +448,13 @@ const S=[
 ];
 const cv=document.getElementById('canvas');
 const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nl=v=>esc(v).replace(/\n/g,'<br>');
 const RC_DEF=`<b>A.P.C</b>渋谷区宇田川町15-1 パルコ2F<hr>2021/02/13（土）12:59<br>COTON MILITAIRE LAVE<br>単価 ¥55,000<hr>決済 クレジット`;
 let scenes=[],cur=-1;
 function buildScenes(){
   cv.innerHTML='';
   S.forEach((s,i)=>{const d=document.createElement('div');d.className='scene';d.style.setProperty('--g',s.g);
-   d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-s="t">${esc(s.t)}</span></div><div class="kw" data-s="k">${esc(s.k)}</div><div class="cap" data-s="c">${esc(s.c)}</div>`;cv.appendChild(d)});
+   d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-s="t">${esc(s.t)}</span></div><div class="kw" data-s="k">${nl(s.k)}</div><div class="cap" data-s="c">${nl(s.c)}</div>`;cv.appendChild(d)});
   scenes=[...cv.children];
   const k=cur;cur=-1;setScene(k<0?0:k);
 }
@@ -476,7 +478,7 @@ onScroll();
 /* gallery */
 const gi=[0,1,3,5,7,10,11];const gr=document.getElementById('grid');
 function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k+1);b.style.setProperty('--g',s.g);
- b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}</small><i>${esc(s.k)}</i></span>`;
+ b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}</small><i>${nl(s.k)}</i></span>`;
  b.onclick=()=>{document.getElementById('mbox').style.setProperty('--g',s.g);document.getElementById('mh').textContent=s.k;document.getElementById('mp').textContent=s.c;document.getElementById('modal').classList.add('open')};
  gr.appendChild(b)})}
 buildGallery();
@@ -545,13 +547,23 @@ function collect(){
     paragraphs:[...c.querySelectorAll('p')].map(p=>({cls:p.className.replace(/\bin\b/g,'').replace(/\s+/g,' ').trim(),html:cleanHTML(p.innerHTML)}))
   }));
   o.scenes=scenes.map(d=>{
-    const g=k=>{const e=d.querySelector(`[data-s="${k}"]`);return e?e.textContent.trim():''};
+    const i=scenes.indexOf(d);
+    const g=k=>{const e=d.querySelector(`[data-s="${k}"]`);const t=e?elText(e).trim():'';return t||(S[i]&&S[i][k])||''};
     const r=d.querySelector('[data-s="rh"]');
     const v={k:g('k'),c:g('c'),t:g('t'),n:g('n')};
     if(r)v.rh=r.innerHTML;
     return v;
   });
   return o;
+}
+function elText(el){
+  let out='';
+  const walk=n=>n.childNodes.forEach(c=>{
+    if(c.nodeType===3)out+=c.nodeValue;
+    else if(c.nodeName==='BR')out+='\n';
+    else{if(/^(DIV|P)$/.test(c.nodeName)&&out&&!out.endsWith('\n'))out+='\n';walk(c)}
+  });
+  walk(el);return out.replace(/\u00a0/g,' ').replace(/\n+$/,'');
 }
 function applyScenes(list,rebuild){
   if(!Array.isArray(list))return;
@@ -614,7 +626,7 @@ addEventListener('paste',e=>{
   if(!el)return;
   e.preventDefault();
   const raw=((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\r\n?/g,'\n');
-  if(el.dataset&&el.dataset.s==='rh'){
+  if(el.dataset&&(el.dataset.s==='rh'||el.dataset.s==='k'||el.dataset.s==='c')){
     document.execCommand('insertHTML',false,esc(raw.replace(/\n+$/,'')).replace(/\n/g,'<br>'));return;
   }
   const isBody=el.tagName==='P'&&prose.contains(el);
