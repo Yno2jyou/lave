@@ -129,6 +129,17 @@ body.editing .chap p{opacity:1!important;transform:none!important}
 body.editing .chdel{display:inline-block}
 body.editing .chdel:hover{border-color:var(--bronze);background:#fff}
 body.editing .portal h1{outline:none!important;background:none!important;cursor:text}
+/* login */
+.login{position:fixed;inset:0;z-index:100;background:rgba(10,8,6,.94);display:none;align-items:center;justify-content:center;padding:4vw}
+.login.open{display:flex}
+.login .lb{width:min(380px,100%);background:var(--paper);padding:2.2rem 2rem;position:relative}
+.login h4{font-family:'Playfair Display',serif;font-weight:400;font-size:1.4rem;margin-bottom:1.4rem;color:var(--umber)}
+.login input{width:100%;border:1px solid #ddd5c6;background:#fff;padding:.8rem 1rem;margin-bottom:.8rem;font:inherit;font-size:14px;color:var(--ink)}
+.login input:focus{outline:2px solid var(--bronze);outline-offset:1px}
+.login .go{width:100%;background:var(--ink);color:var(--paper);padding:.85rem;letter-spacing:.25em;font-size:12px}
+.login .go:disabled{opacity:.5}
+.login .msg{min-height:1.4em;margin-top:.9rem;font-size:12px;color:#a33;line-height:1.6}
+.login .x{position:absolute;top:10px;right:12px;font-size:11px;letter-spacing:.2em;color:var(--slate)}
 </style>
 </head>
 <body>
@@ -386,10 +397,24 @@ body.editing .portal h1{outline:none!important;background:none!important;cursor:
   <div class="nodes" id="nodes"></div>
 </div>
 
+<div class="login" id="login" role="dialog" aria-label="管理者ログイン">
+  <div class="lb">
+    <button class="x" type="button" onclick="closeLogin()">CLOSE ✕</button>
+    <h4>Administrator</h4>
+    <input id="lmail" type="email" placeholder="メールアドレス" autocomplete="username">
+    <input id="lpass" type="password" placeholder="パスワード" autocomplete="current-password">
+    <button class="go" id="lgo" type="button">LOGIN</button>
+    <div class="msg" id="lmsg"></div>
+  </div>
+</div>
+
 <div class="modal" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
   <div class="box" id="mbox"><button onclick="document.getElementById('modal').classList.remove('open')">CLOSE ✕</button><h4 id="mh"></h4><p id="mp"></p></div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const G={
  dawn:'linear-gradient(160deg,#d9ccb4 0%,#8a7358 55%,#3b2a20 100%)',
@@ -446,11 +471,25 @@ const pos=[[4,6],[28,2],[55,8],[78,3],[12,26],[40,22],[68,28],[6,50],[32,46],[60
 const nd=document.getElementById('nodes');nd.style.minHeight='620px';
 T.forEach((t,i)=>{const b=document.createElement('button');b.className='node';b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
  b.innerHTML=`<small>${t[0]} · ${S[i].t}</small><span>${t[1]}</span>`;
- b.onclick=()=>{closeMap();const idx=Math.min(ps.length-1,Math.floor(i*ps.length/S.length));(ps[idx]||prose).scrollIntoView({block:'center'})};nd.appendChild(b)});
+ b.onclick=()=>{closeMap();const ps=prose.querySelectorAll('p');const idx=Math.min(ps.length-1,Math.floor(i*ps.length/S.length));(ps[idx]||prose).scrollIntoView({block:'center'})};nd.appendChild(b)});
 function openMap(){document.getElementById('map').classList.add('open')}
 function closeMap(){document.getElementById('map').classList.remove('open')}
-addEventListener('keydown',e=>{if(e.key==='Escape'){closeMap();document.getElementById('modal').classList.remove('open')}});
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeMap();closeLogin();document.getElementById('modal').classList.remove('open')}});
 let fs=18;function sz(d){fs=Math.min(26,Math.max(15,fs+d*2));document.documentElement.style.setProperty('--fs',fs+'px')}
+
+/* ---------- Firebase ---------- */
+/* Firebaseコンソール → プロジェクトの設定 → マイアプリ(ウェブ) の構成値に置き換えてください */
+const FB_CONFIG={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT_ID"};
+firebase.initializeApp(FB_CONFIG);
+const auth=firebase.auth(),db=firebase.firestore();
+const TEXT_DOC=db.collection('site').doc('text');
+
+/* admins コレクションに「小文字のメールアドレス」のドキュメントがあるか */
+async function isAdminUser(u){
+  if(!u||!u.email)return false;
+  try{return (await db.collection('admins').doc(u.email.toLowerCase()).get()).exists}
+  catch(e){return false}
+}
 
 /* ---------- 管理モード: タイトルを5回タップ ---------- */
 const EDIT_SEL='[data-edit]';
@@ -459,8 +498,9 @@ const est=document.createElement('span');est.className='st';
 const bAdd=document.createElement('button');bAdd.textContent='＋章を追加';
 const bSave=document.createElement('button');bSave.className='primary';bSave.textContent='保存';
 const bCancel=document.createElement('button');bCancel.textContent='やめる';
+const bOut=document.createElement('button');bOut.textContent='ログアウト';
 const bClose=document.createElement('button');bClose.textContent='閉じる';
-ebar.append(est,bAdd,bSave,bCancel,bClose);document.body.appendChild(ebar);
+ebar.append(est,bAdd,bSave,bCancel,bOut,bClose);document.body.appendChild(ebar);
 function say(t){est.textContent=t}
 function editables(on){
   document.querySelectorAll(EDIT_SEL).forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
@@ -513,18 +553,56 @@ function exitEdit(){document.body.classList.remove('editing');editables(false);u
 async function saveEdit(){
   say('保存中…');
   try{
-    const res=await fetch('/api/site-text',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({content:collect()})});
-    const json=await res.json().catch(()=>({}));
-    if(res.ok&&json.ok){say('保存しました');setTimeout(exitEdit,900)}
-    else{say('Firebaseに保存できませんでした（'+(json.error||res.status)+'）— Firestoreの有効化をご確認ください')}
-  }catch(e){say('保存できませんでした（通信エラー）')}
+    await TEXT_DOC.set(collect());
+    say('保存しました');setTimeout(exitEdit,900);
+  }catch(e){
+    say(e.code==='permission-denied'?'権限がありません。再ログインしてください':'保存できませんでした（'+(e.code||'通信エラー')+'）');
+  }
 }
 function cancelEdit(){applyContent(snap);exitEdit()}
+
+/* ---------- ログイン画面 ---------- */
+const lg=document.getElementById('login'),lmail=document.getElementById('lmail'),lpass=document.getElementById('lpass'),lmsg=document.getElementById('lmsg'),lgo=document.getElementById('lgo');
+function openLogin(){lmsg.textContent='';lpass.value='';lg.classList.add('open');lmail.focus()}
+function closeLogin(){lg.classList.remove('open');lpass.value=''}
+async function doLogin(){
+  const mail=lmail.value.trim().toLowerCase(),pass=lpass.value;
+  if(!mail||!pass){lmsg.style.color='#a33';lmsg.textContent='メールアドレスとパスワードを入力してください';return}
+  lgo.disabled=true;lmsg.style.color='#5B6470';lmsg.textContent='確認中…';
+  try{
+    const cred=await auth.signInWithEmailAndPassword(mail,pass);
+    if(await isAdminUser(cred.user)){
+      closeLogin();enterEdit();
+    }else{
+      await auth.signOut();
+      lmsg.style.color='#a33';lmsg.textContent='このアカウントには管理権限がありません';
+    }
+  }catch(e){
+    lmsg.style.color='#a33';
+    lmsg.textContent=(e.code==='auth/too-many-requests')?'試行回数が多すぎます。しばらくしてからお試しください':'メールアドレスまたはパスワードが正しくありません';
+  }finally{lgo.disabled=false;lpass.value=''}
+}
+lgo.onclick=doLogin;
+lpass.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+lmail.addEventListener('keydown',e=>{if(e.key==='Enter')lpass.focus()});
+lg.addEventListener('click',e=>{if(e.target===lg)closeLogin()});
+
 bSave.onclick=saveEdit;bCancel.onclick=cancelEdit;bClose.onclick=exitEdit;bAdd.onclick=addChapter;
+bOut.onclick=async()=>{exitEdit();try{await auth.signOut()}catch(e){}};
+
+/* タイトル5回タップ → 認証済み管理者なら編集モード、そうでなければログイン画面 */
 let taps=0,tapAt=0;
 const titleEl=document.querySelector('.portal h1');
-titleEl.addEventListener('click',()=>{const n=Date.now();taps=(n-tapAt<900)?taps+1:1;tapAt=n;if(taps>=5){taps=0;enterEdit()}});
-fetch('/api/site-text').then(r=>r.json()).then(j=>{if(j&&j.ok)applyContent(j.content)}).catch(()=>{});
+titleEl.addEventListener('click',async()=>{
+  const n=Date.now();taps=(n-tapAt<900)?taps+1:1;tapAt=n;
+  if(taps>=5){
+    taps=0;
+    if(await isAdminUser(auth.currentUser))enterEdit();else openLogin();
+  }
+});
+
+/* 本文の読み込み（Firestoreの公開読み取り） */
+TEXT_DOC.get().then(s=>{if(s.exists)applyContent(s.data())}).catch(()=>{});
 </script>
 </body>
 </html>
