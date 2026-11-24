@@ -111,7 +111,9 @@ footer span,footer a{display:block;min-width:0;white-space:normal}
  .portal .abs{font-size:.88rem;line-height:2}
  .ctl{top:10px;right:10px;gap:6px}
  .ctl button{padding:.4rem .7rem;font-size:11px}
- .grid{display:block}.card{margin-bottom:12px;min-height:240px}
+ .grid{display:flex;flex-direction:column;align-items:center;gap:14px}
+ .card,.c1,.c2,.c3,.c4,.c5,.c6,.c7{grid-column:auto;width:min(100%,420px);min-height:0;aspect-ratio:1/1;margin:0;padding:1.4rem;align-items:center;justify-content:center;text-align:center}
+ .card span{width:100%}
  .node{position:relative!important;left:auto!important;top:auto!important;display:block;margin:10px 0;max-width:none;border-radius:16px}
  .nodes{min-height:0}
 }
@@ -524,13 +526,17 @@ let fs=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--f
 /* ---------- Firebase ---------- */
 /* Firebaseコンソール → プロジェクトの設定 → マイアプリ(ウェブ) の構成値に置き換えてください */
 const FB_CONFIG={apiKey:"AIzaSyAQOzsk4uUWRGX5TagfCQ2-tJ_FGv15RIc",authDomain:"lave-ba4a9.firebaseapp.com",projectId:"lave-ba4a9",storageBucket:"lave-ba4a9.firebasestorage.app",messagingSenderId:"908000959840",appId:"1:908000959840:web:21f7d4fe46be2574511205"};
-firebase.initializeApp(FB_CONFIG);
-const auth=firebase.auth(),db=firebase.firestore();
-const TEXT_DOC=db.collection('site').doc('text');
+let auth=null,db=null,TEXT_DOC=null;
+try{
+  if(typeof firebase==='undefined')throw new Error('Firebase SDK not loaded');
+  firebase.initializeApp(FB_CONFIG);
+  auth=firebase.auth();db=firebase.firestore();
+  TEXT_DOC=db.collection('site').doc('text');
+}catch(err){console.warn('Firebase を利用できません（閲覧のみ可能）:',err)}
 
 /* admins コレクションに「小文字のメールアドレス」のドキュメントがあるか */
 async function isAdminUser(u){
-  if(!u||!u.email)return false;
+  if(!db||!u||!u.email)return false;
   try{return (await db.collection('admins').doc(u.email.toLowerCase()).get()).exists}
   catch(e){return false}
 }
@@ -721,6 +727,7 @@ async function saveEdit(){
   say('保存中…');
   try{
     const data=collect();
+    if(!TEXT_DOC)throw {code:'firebase-unavailable'};
     await TEXT_DOC.set(data);
     snap=data;
     applyScenes(data.scenes,false);
@@ -738,6 +745,7 @@ function closeLogin(){lg.classList.remove('open');lpass.value=''}
 async function doLogin(){
   const mail=lmail.value.trim().toLowerCase(),pass=lpass.value;
   if(!mail||!pass){lmsg.style.color='#a33';lmsg.textContent='メールアドレスとパスワードを入力してください';return}
+  if(!auth){lmsg.style.color='#a33';lmsg.textContent='Firebase を読み込めませんでした。通信環境や広告ブロッカー、プレビュー環境の制限をご確認ください';return}
   lgo.disabled=true;lmsg.style.color='#5B6470';lmsg.textContent='確認中…';
   try{
     const cred=await auth.signInWithEmailAndPassword(mail,pass);
@@ -761,7 +769,7 @@ lmail.addEventListener('keydown',e=>{if(e.key==='Enter')lpass.focus()});
 lg.addEventListener('click',e=>{if(e.target===lg)closeLogin()});
 
 bSave.onclick=saveEdit;bCancel.onclick=cancelEdit;bClose.onclick=exitEdit;bAdd.onclick=addChapter;
-bOut.onclick=async()=>{exitEdit();try{await auth.signOut()}catch(e){}};
+bOut.onclick=async()=>{exitEdit();try{if(auth)await auth.signOut()}catch(e){}};
 
 /* タイトル5回タップ → 認証済み管理者なら編集モード、そうでなければログイン画面 */
 let taps=0,tapAt=0;
@@ -770,12 +778,12 @@ titleEl.addEventListener('click',async()=>{
   const n=Date.now();taps=(n-tapAt<900)?taps+1:1;tapAt=n;
   if(taps>=5){
     taps=0;
-    if(await isAdminUser(auth.currentUser))enterEdit();else openLogin();
+    if(auth&&await isAdminUser(auth.currentUser))enterEdit();else openLogin();
   }
 });
 
 /* 本文の読み込み（Firestoreの公開読み取り） */
-TEXT_DOC.get().then(s=>{if(s.exists)applyContent(s.data())}).catch(()=>{});
+if(TEXT_DOC)TEXT_DOC.get().then(s=>{if(s.exists)applyContent(s.data())}).catch(()=>{});
 </script>
 </body>
 </html>
