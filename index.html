@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#FDFCF8;--ink:#1A1A1A;--bronze:#8B5E3C;--umber:#3B2A20;--slate:#5B6470;--ivory:#EFE8DA;--fs:18px}
+:root{--paper:#FDFCF8;--ink:#1A1A1A;--bronze:#8B5E3C;--umber:#3B2A20;--slate:#5B6470;--ivory:#EFE8DA;--fs:16px}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--paper);color:var(--ink);font-family:'Inter','Noto Serif JP',sans-serif;line-height:1.6}
@@ -102,7 +102,16 @@ footer span,footer a{display:block;min-width:0;white-space:normal}
  .reader{display:block;position:relative}
  .stage{position:fixed;inset:0;height:100vh;padding:0;z-index:0}
  .canvas{opacity:.42}.scene .big,.scene .cap,.scene .tone{display:none}.rcpt{display:none}
- .text{position:relative;z-index:1;padding:14vh 22px 16vh;background:linear-gradient(rgba(253,252,248,.82),rgba(253,252,248,.82))}
+ :root{--fs:14px}
+ .text{position:relative;z-index:1;padding:14vh 28px 16vh;background:linear-gradient(rgba(253,252,248,.82),rgba(253,252,248,.82))}
+ .prose p,.chap p{line-height:2}
+ .prose .chap h2{font-size:1.3rem;margin-bottom:1.4rem}
+ .chap .no{font-size:.9rem}
+ .portal h1{font-size:clamp(2.4rem,11vw,3.4rem)}
+ .portal h1 em{font-size:.38em}
+ .portal .abs{font-size:.88rem;line-height:2}
+ .ctl{top:10px;right:10px;gap:6px}
+ .ctl button{padding:.4rem .7rem;font-size:11px}
  .grid{display:block}.card{margin-bottom:12px;min-height:240px}
  .node{position:relative!important;left:auto!important;top:auto!important;display:block;margin:10px 0;max-width:none;border-radius:16px}
  .nodes{min-height:0}
@@ -162,7 +171,6 @@ body.editing .scene [data-s]:focus{background:rgba(255,255,255,.12);outline-colo
 <div class="ctl">
   <button onclick="sz(-1)" aria-label="文字を小さく">A−</button>
   <button onclick="sz(1)" aria-label="文字を大きく">A＋</button>
-  <button onclick="openMap()" aria-label="章の地図を開く">CHAPTERS</button>
 </div>
 
 <main>
@@ -328,11 +336,11 @@ body.editing .scene [data-s]:focus{background:rgba(255,255,255,.12);outline-colo
 <p>短い会話だった。既読はついたけれど、返事は来なかった。僕はスマートフォンを机の上に置き、窓の外を眺めた。隣の家の物干しには、洗濯物が風に揺れていた。春の光は部屋の奥まで届いていた。僕はしばらくそのまま座っていたが、やがて本棚からあの文庫本を取り出した。</p>
 <p>レシートは以前と同じページに挟まっていた。</p>
 <p class="rc">店名　A.P.C<br>住所　東京都渋谷区宇田川町15ー1　パルコ2F<br>日付　2021年02月13日（土）12:59<br>商品名　COTON MILITAIRE LAVE<br>単価　¥55,000<br>決済方法　クレジット</p>
+<p>その人は今、どこにいるのだろう、と僕は考えた。今も渋谷の近くに住んでいるのかもしれないし、あるいはフユのようにまったく別の知らない街に住んでいるのかもしれない。あのジャケットはまだクローゼットに残っているだろうか。それとももう処分してしまったのだろうか。この本を売ったのはいつだったのか。どんな気持ちで古本屋に持って行ったのか。あるいは売ったこと自体をもう覚えていないのかもしれない。レシートが挟まったままだったことにも最後まで気づかなかった可能性もある。そう考えると、この小さな紙切れだけが、今もその人から切り離されずに残っているのだ。</p>
+<p>レシートはまだ手元にある。紙は少し柔らかくなり、端も少し丸くなったが、印字は今でも読める。二〇二一年二月十三日、土曜日、十二時五十九分。A.P.C。COTON MILITAIRE LAVE。五万五千円。クレジット。そこには、ただそれだけが記録されている。名前も、顔も知らない誰かが、ある土曜日に渋谷で服を買い、そのあとこの本を読んでいた。そして栞に、レシートを用いた。その事実だけで、世界は今以上にクリアに見えた。秋の夕方や、雨が降り出す少し前みたいな時間に、僕はたまにその本を本棚から取り出すのだろう。そしてレシートを眺めながら、その人のことを考えるのだろう。</p>
 </section>
 
 <section class="chap"><div class="no">XI</div><h2>洗われた、というアカウント</h2>
-<p>その人は今、どこにいるのだろう、と僕は考えた。今も渋谷の近くに住んでいるのかもしれないし、あるいはフユのようにまったく別の知らない街に住んでいるのかもしれない。あのジャケットはまだクローゼットに残っているだろうか。それとももう処分してしまったのだろうか。この本を売ったのはいつだったのか。どんな気持ちで古本屋に持って行ったのか。あるいは売ったこと自体をもう覚えていないのかもしれない。レシートが挟まったままだったことにも最後まで気づかなかった可能性もある。そう考えると、この小さな紙切れだけが、今もその人から切り離されずに残っているのだ。</p>
-<p>レシートはまだ手元にある。紙は少し柔らかくなり、端も少し丸くなったが、印字は今でも読める。二〇二一年二月十三日、土曜日、十二時五十九分。A.P.C。COTON MILITAIRE LAVE。五万五千円。クレジット。そこには、ただそれだけが記録されている。名前も、顔も知らない誰かが、ある土曜日に渋谷で服を買い、そのあとこの本を読んでいた。そして栞に、レシートを用いた。その事実だけで、世界は今以上にクリアに見えた。秋の夕方や、雨が降り出す少し前みたいな時間に、僕はたまにその本を本棚から取り出すのだろう。そしてレシートを眺めながら、その人のことを考えるのだろう。</p>
 <p>ふたつ目の短編の最後で、物語の主人公はこんなことを考える。</p>
 <p>もしあの人と三十分だけでも話せたなら、その人がどこから来て、どこへ向かおうとしていたのかを聞いてみたかった、と。好きな季節や、朝によく飲むものや、どんな音楽を聴くのか知りたかった、と。そしてあの晴れた朝に、偶然すれ違うに至った運命の経緯のようなものを解き明かしてみたい、と。もちろん、これは架空の話だ。でも僕はその文章を、どうしてもレシートの誰かに重ねずにはいられなかった。</p>
 <p>もし三十分だけでも話せたなら、と僕は思う。どこから来て、どこへ向かっていたのか。どんな部屋に住み、朝には何を飲むのか。休日には何をして過ごすのか。どうしてあの日、渋谷パルコでジャケットを買い、そのレシートをこの本へ挟んだのか。そしてあの古本屋で僕がこの本を手にとるに至った運命の経緯のようなものを解き明かしてみたい。もちろん、その人に出会うことは、今後一生ないのかもしれない。一枚の小さなレシートから特定の誰かを探し当てるなんて、現実的にはほとんど不可能だ。でも、その人は確かに存在していた。この本を読み、途中でページを閉じ、レシートを挟んだ。そのことだけはこの小さな紙が確かに証明している。僕はそれで十分だと思った。あの本は今も本棚にある。レシートもまだ同じページに挟まっている。そして僕はこれからも、ときどきその本を開いて、名前も知らない誰かのことを少しだけ考えるのだと思う。悪くない、と思った。悪くない人生だ、と思った。そして願わくば、その人生の最果てに、レシートを栞にした誰かと出会えたなら、それ以上に幸運なことはないのかもしれない。僕はレシートを本に挟み、そっと閉じた。するとちょうどそのとき、机の上のスマートフォンが短く震えた。画面にはインスタグラムのフォロー申請が届いていた。画面をスワイプして、インスタグラムを開くと、そこにはアカウントからのフォロー申請が表示されていた。アカウントのタイムラインを遡っていくと、ふと目に止まる写真があった。二〇二一年二月十三日に投稿された一枚の写真。それはカーキ色のジャケットを纏う女性の後ろ姿の写真だった。僕は目を見張り、ほとんど反射的に、画面をスクロールしてアカウント名を見つめた。そこにはたった一行、こう書かれていた。</p>
@@ -375,13 +383,11 @@ body.editing .scene [data-s]:focus{background:rgba(255,255,255,.12);outline-colo
 <p class="d">「三十六歳で死んだ人でしょう、あの人。でも映画の中では、ずっとあの顔で、あの声で、生きてる。会ったこともない人が何十年経っても誰かの記憶のなかで、ちゃんと生きてる。あなたが誰かを思い続けていたのも、きっとそういうことなんだって思ったの。そのとき、直感で──」</p>
 <p>僕はようやく確信した。信号の音が、遠くで鳴っていた。春の風が、広場を斜めに抜けていく。フユは少しだけ背筋を伸ばして、僕を見た。</p>
 <p class="d">「ジェラール・フィリップは現れたね、ちゃんと」</p>
-</section>
-
-<section class="chap"><div class="no">XIII</div><h2>洗われた、と</h2>
 <p>カーキ色の袖が、風に揺れていた。陽の光のなかで、彼女の言葉は凛として澄んでいた。あの日から、どれくらいの時間が経っただろう。どれほどの想いが胸にあふれ、やがてついえていっただろう。しかしそれでもついえなかった想いは、確かにあった。消えずに、灯り続けた想いがあった。きっと今なら胸を張って、その想いを伝えられるはずだ。何度も迷い、戸惑い、そして心に閉ざしてきたあの言葉を、今なら、きっと──。</p>
 <p>運命の予感をたっぷりと含んだ空気を、胸いっぱいに吸い込む。そして僕は在りし日の記憶を告げるように、そっと口を開く。</p>
 <p class="fin">──ジェラール・フィリップは洗われた、と。</p>
 </section>
+
 </article>
 </div>
 
@@ -390,18 +396,11 @@ body.editing .scene [data-s]:focus{background:rgba(255,255,255,.12);outline-colo
 
 <section class="gal" id="gallery">
   <h2>The Gallery<br>of Small Things</h2>
-  <p class="sub">物語に散らばる七つの断片。それぞれの光と質感を、色と言葉だけで写し取った。</p>
   <div class="grid" id="grid"></div>
 </section>
 </main>
 
 <footer><span data-edit="footer">SYNAPTIC ARCHIVE</span><a href="#top">TOP ↑</a></footer>
-
-<div class="map" id="map" role="dialog" aria-label="章の地図">
-  <button class="close" onclick="closeMap()">CLOSE ✕</button>
-  <h3>Constellation of Themes — 感情の星図から読む</h3>
-  <div class="nodes" id="nodes"></div>
-</div>
 
 <div class="login" id="login" role="dialog" aria-label="管理者ログイン">
   <div class="lb">
@@ -444,10 +443,8 @@ const S=[
  {k:'12:59',t:'Receipt',c:'ある土曜日の、ある店の、ある金額。',g:G.paper,n:'票',r:1},
  {k:'Lyon',t:'Distance',c:'時差、絆創膏、間遠になるメッセージ。',g:G.slate,n:'離'},
  {k:'13:27',t:'Signal',c:'カーキ色の後ろ姿。アカウント名がすべてを告げる。',g:G.khaki,n:'信',r:1},
- {k:'Shibuya, again',t:'Convergence',c:'春の風、横断歩道、色だけが違う一人。',g:G.khaki,n:'再'},
- {k:'Washed',t:'Fin',c:'運命の予感をたっぷりと含んだ空気を、胸いっぱいに。',g:G.dawn,n:'了'}
+ {k:'Shibuya, again',t:'Convergence',c:'春の風、横断歩道、色だけが違う一人。',g:G.khaki,n:'再'}
 ];
-const T=S.map(s=>[s.n,s.k]);
 const cv=document.getElementById('canvas');
 const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const RC_DEF=`<b>A.P.C</b>渋谷区宇田川町15-1 パルコ2F<hr>2021/02/13（土）12:59<br>COTON MILITAIRE LAVE<br>単価 ¥55,000<hr>決済 クレジット`;
@@ -483,17 +480,8 @@ function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=
  b.onclick=()=>{document.getElementById('mbox').style.setProperty('--g',s.g);document.getElementById('mh').textContent=s.k;document.getElementById('mp').textContent=s.c;document.getElementById('modal').classList.add('open')};
  gr.appendChild(b)})}
 buildGallery();
-/* map */
-const pos=[[4,6],[28,2],[55,8],[78,3],[12,26],[40,22],[68,28],[6,50],[32,46],[60,52],[82,44],[20,72],[56,76]];
-const nd=document.getElementById('nodes');nd.style.minHeight='620px';
-function buildMap(){nd.innerHTML='';S.map(s=>[s.n,s.k]).forEach((t,i)=>{const b=document.createElement('button');b.className='node';b.style.left=pos[i][0]+'%';b.style.top=pos[i][1]+'%';
- b.innerHTML=`<small>${esc(t[0])} · ${esc(S[i].t)}</small><span>${esc(t[1])}</span>`;
- b.onclick=()=>{closeMap();const cs=prose.querySelectorAll('.chap');(cs[i]||cs[cs.length-1]||prose).scrollIntoView({block:'start'})};nd.appendChild(b)})}
-buildMap();
-function openMap(){document.getElementById('map').classList.add('open')}
-function closeMap(){document.getElementById('map').classList.remove('open')}
-addEventListener('keydown',e=>{if(e.key==='Escape'){closeMap();closeLogin();document.getElementById('modal').classList.remove('open')}});
-let fs=18;function sz(d){fs=Math.min(26,Math.max(15,fs+d*2));document.documentElement.style.setProperty('--fs',fs+'px')}
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeLogin();document.getElementById('modal').classList.remove('open')}});
+let fs=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||16;function sz(d){fs=Math.min(26,Math.max(12,fs+d*2));document.documentElement.style.setProperty('--fs',fs+'px')}
 
 /* ---------- Firebase ---------- */
 /* Firebaseコンソール → プロジェクトの設定 → マイアプリ(ウェブ) の構成値に置き換えてください */
@@ -566,10 +554,10 @@ function collect(){
   return o;
 }
 function applyScenes(list,rebuild){
-  if(!Array.isArray(list)||list.length!==S.length)return;
-  list.forEach((v,i)=>{['k','c','t','n'].forEach(f=>{if(v&&v[f])S[i][f]=v[f]});if(v&&v.rh)S[i].rh=v.rh});
+  if(!Array.isArray(list))return;
+  list.slice(0,S.length).forEach((v,i)=>{['k','c','t','n'].forEach(f=>{if(v&&v[f])S[i][f]=v[f]});if(v&&v.rh)S[i].rh=v.rh});
   if(rebuild){buildScenes();if(document.body.classList.contains('editing'))editables(true)}
-  buildGallery();buildMap();
+  buildGallery();
 }
 function applyContent(c){
   if(!c)return;
