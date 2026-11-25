@@ -227,11 +227,10 @@ body.editing .hero [data-e]{outline:1px dashed rgba(139,94,60,.6);outline-offset
 .hero .jp-t{color:#2e1d10}
 .hero h1{color:#000}
 .hero .abs{color:#000;font-weight:400}
-body.editing .works a{pointer-events:none}
+
 body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px dashed rgba(139,94,60,.6);outline-offset:3px}
 .portal{background:linear-gradient(rgba(253,252,248,.18),rgba(253,252,248,.42)),url("assets/cover.png") center/cover no-repeat}
 .portal h1 em{text-shadow:0 0 14px rgba(253,252,248,.95),0 0 4px rgba(253,252,248,.9)}
-.hero .jp-t{min-height:1.4em}
 .works li.rv{opacity:0;transform:translateY(40px);transition:opacity 1.6s ease,transform 1.6s ease}
 .works li.rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.works li.rv{opacity:1;transform:none;transition:none}}
@@ -241,7 +240,7 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 <div id="bar"></div>
 <div class="ctl"><button onclick="sz(-1)" aria-label="文字を小さく">A−</button><button onclick="sz(1)" aria-label="文字を大きく">A＋</button></div>
 <main id="root"></main>
-<footer><span>SYNAPTIC ARCHIVE</span><a href="#" id="admLink">管理</a></footer>
+<footer><span>Y2 ARCHIVE</span><a href="#" id="admLink">ADMIN</a></footer>
 
 <div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
 <div class="login" id="login" role="dialog" aria-label="管理者ログイン">
@@ -399,7 +398,7 @@ function renderTop(){
     <p class="abs" data-e="abstract">${esc(t.abstract)}</p>
     <button class="enter" type="button" id="enterBtn">ENTER THE ARCHIVE</button></div></header>
   <section class="constel" id="gallery"><div class="eyebrow">THE CONSTELLATION</div><h2>収録作品</h2><ol class="works" id="works"></ol></section>`;
-  $('works').innerHTML=DATA.stories.map((s0,k)=>{const s=storyOf(s0);return `<li class="${k%2?'r':''}" data-w-id="${s0.id}"><a href="#${s0.id}"><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></a></li>`}).join('');
+  $('works').innerHTML=DATA.stories.map((s0,k)=>{const s=storyOf(s0);const A=EDIT?'div':'a';const H=EDIT?'':` href="#${s0.id}"`;return `<li class="${k%2?'r':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}></li>`}).join('');
   $('enterBtn').onclick=()=>$('gallery').scrollIntoView();
   const items=[...document.querySelectorAll('#works li')];
   if(EDIT||reduced){items.forEach(li=>li.classList.add('in'));}
@@ -408,14 +407,8 @@ function renderTop(){
     const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.35});
     items.forEach(li=>io.observe(li));
   }
-  if(!introDone&&!EDIT&&!reduced){introDone=true;typeTitle(document.querySelector('.hero .jp-t'))}
 }
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let introDone=false;
-function typeTitle(el){
-  if(!el)return;const full=el.textContent;el.textContent='';el.style.visibility='visible';
-  let i=0;const timer=setInterval(()=>{el.textContent=full.slice(0,++i);if(i>=full.length)clearInterval(timer)},230);
-}
 function render(){
   const id=sid();
   if(id&&DATA.stories.find(x=>x.id===id))renderStory(id);
