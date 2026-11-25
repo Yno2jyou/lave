@@ -234,6 +234,14 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 .works li.rv{opacity:0;transform:translateY(40px);transition:opacity 1.6s ease,transform 1.6s ease}
 .works li.rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.works li.rv{opacity:1;transform:none;transition:none}}
+.cedit{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-bottom:.8rem}
+.cedit .mv{border:1px solid var(--bronze);background:#fff;padding:.4rem .7rem;cursor:grab;font-size:16px;color:var(--bronze)}
+.cedit .mv:active{cursor:grabbing}
+.cedit .cdel{border:1px solid #a33;background:#fff;padding:.4rem .8rem;font-size:12px;color:#a33}
+.cedit .cdel:hover{background:#a33;color:#fff}
+.chap.dragging{opacity:.6;box-shadow:0 8px 24px rgba(0,0,0,.18);background:var(--paper)}
+.cedit .mv{touch-action:none;min-width:44px;min-height:44px}
+@media(max-width:820px){.cedit{flex-wrap:wrap}#editor{bottom:8px;gap:6px}#editor button{padding:.45rem .6rem}}
 </style>
 </head>
 <body>
@@ -242,7 +250,7 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 <main id="root"></main>
 <footer><span>Y2 ARCHIVE</span><a href="#" id="admLink">ADMIN</a></footer>
 
-<div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
+<div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bAdd">章を追加</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
 <div class="login" id="login" role="dialog" aria-label="管理者ログイン">
   <div class="lb"><button class="x" type="button" id="lx">CLOSE ✕</button><h4>Administrator</h4>
     <input id="lmail" type="email" placeholder="メールアドレス" autocomplete="username">
@@ -373,7 +381,7 @@ function renderStory(id){
   const header=isG?DATA.orig.header:
     `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
   let body;
-  if(EDIT){body=chs.map((c,i)=>`<section class="chap"><div class="no">${ROMAN[i]}</div><label class="lbl">章タイトル</label><input class="ef" data-ct="${i}" placeholder="章タイトル（任意）" value="${esc(c.title||'')}"><label class="lbl">本文（1行＝1段落）</label><textarea class="ef" data-cb="${i}">${esc(c.paragraphs.join('\n'))}</textarea></section>`).join('')}
+  if(EDIT){body=chs.map(c=>`<section class="chap">${chapEditHTML(c)}</section>`).join('')}
   else if(isG&&!(OV.stories[id]&&OV.stories[id].chapters)){body=oldG?oldChaptersHTML(RAW.chapters):DATA.orig.prose}
   else{body=newChaptersHTML(chs)}
   root=$('root');
@@ -386,7 +394,7 @@ function renderStory(id){
   prose=$('prose');cv=$('canvas');gr=$('grid');
   buildScenes();buildGallery();watchProse();
   cur=-1;setScene(0);onScroll();
-  if(EDIT)document.querySelectorAll('.chap .no').forEach((el,i)=>el.textContent=ROMAN[i]);
+  if(EDIT){renum();bindChapterEdit();}
 }
 /* ---------- 収録作品一覧 ---------- */
 function renderTop(){
@@ -425,11 +433,49 @@ function bindEdit(){
   document.querySelectorAll(sel).forEach(el=>{el.setAttribute('contenteditable','true');el.spellcheck=false});
 }
 function chaptersNow(){
-  const out=[];
-  document.querySelectorAll('[data-cb]').forEach((ta,i)=>out.push({title:document.querySelector(`[data-ct="${i}"]`).value.trim(),
-    paragraphs:ta.value.split('\n').map(x=>x.trim()).filter(Boolean)}));
-  return out;
+  return [...document.querySelectorAll('#prose section.chap')].map(sec=>({
+    title:(sec.querySelector('input.ct')||{value:''}).value.trim(),
+    paragraphs:(sec.querySelector('textarea.cb')||{value:''}).value.split('\n').map(x=>x.trim()).filter(Boolean)}));
 }
+/* 章の編集欄（操作ボタン・章タイトル・本文） */
+function chapEditHTML(c){return `<div class="cedit"><button type="button" class="mv" title="ドラッグで移動">↕︎</button><button type="button" class="cdel">この章を削除</button></div><div class="no"></div><label class="lbl">章タイトル</label><input class="ef ct" placeholder="章タイトル（任意）" value="${esc(c.title||'')}"><label class="lbl">本文（1行＝1段落）</label><textarea class="ef cb">${esc((c.paragraphs||[]).join('\n'))}</textarea>`}
+function renum(){document.querySelectorAll('#prose section.chap .no').forEach((el,i)=>el.textContent=ROMAN[i])}
+function bindChapterEdit(){
+  const prose=$('prose');if(!prose)return;
+  prose.querySelectorAll('section.chap').forEach(sec=>{
+    const mv=sec.querySelector('.mv');
+    mv.style.touchAction='none';
+    /* ポインター操作（マウス・タッチ共通）で章を並べ替え */
+    mv.onpointerdown=e=>{
+      e.preventDefault();
+      sec.classList.add('dragging');
+      const move=ev=>{
+        const y=ev.clientY;
+        for(const s of prose.querySelectorAll('section.chap')){
+          if(s===sec)continue;
+          const r=s.getBoundingClientRect();
+          if(y>r.top&&y<r.bottom){prose.insertBefore(sec,y<r.top+r.height/2?s:s.nextSibling);break}
+        }
+      };
+      const up=()=>{
+        window.removeEventListener('pointermove',move);
+        window.removeEventListener('pointerup',up);
+        window.removeEventListener('pointercancel',up);
+        sec.classList.remove('dragging');renum();
+      };
+      window.addEventListener('pointermove',move);
+      window.addEventListener('pointerup',up);
+      window.addEventListener('pointercancel',up);
+    };
+    sec.querySelector('.cdel').onclick=()=>{if(!confirm('この章を削除しますか？'))return;sec.remove();renum()};
+  });
+}
+function addChapter(){
+  const prose=$('prose');const sec=document.createElement('section');sec.className='chap';
+  sec.innerHTML=chapEditHTML({title:'',paragraphs:[]});prose.appendChild(sec);
+  renum();bindChapterEdit();sec.scrollIntoView({behavior:'smooth',block:'center'});sec.querySelector('.ct').focus();
+}
+$('bAdd').onclick=()=>{if($('prose')&&EDIT)addChapter();else $('est').textContent='作品ページで使用してください'};
 function collect(){
   if(STORY&&document.getElementById('prose')){
     const id=STORY.id;
