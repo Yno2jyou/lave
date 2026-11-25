@@ -504,7 +504,7 @@ function renderStory(id){
   const oldG=isG&&Array.isArray(RAW.chapters)&&RAW.chapters.length;
   const srcHTML=isG?(oldG?oldChaptersHTML(RAW.chapters):DATA.orig.prose):null;
   const chs=(OV.stories[id]&&OV.stories[id].chapters)?OV.stories[id].chapters:(isG?domChapters(srcHTML):s0.chapters);
-  chs.forEach(c=>{if(!c.img){const o=(s0.chapters||[]).find(x=>x.img&&(x.paragraphs||[])[0]===(c.paragraphs||[])[0]);if(o)c.img=o.img}});
+  chs.forEach((c,i)=>{if(!c.img){const sc=(s0.chapters||[]);const o=sc.find(x=>x.img&&(x.paragraphs||[])[0]===(c.paragraphs||[])[0])||(sc.length===chs.length&&sc[i]&&sc[i].img?sc[i]:null);if(o)c.img=o.img}});
   STORY={...base,chapters:chs};const pic=chs.some(c=>c.img);
   const gen=genScenes(chs);
   const pick=v=>Object.fromEntries(['c','t','n','rh'].filter(f=>v&&v[f]).map(f=>[f,v[f]]));
