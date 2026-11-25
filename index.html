@@ -335,7 +335,7 @@ body.editing .portal::before,body.editing .portal>*,body.editing .portal .ghost{
 <div id="loader"><div class="spin"></div><p id="lerr"></p><button id="lretry" type="button" style="display:none">再読み込み</button></div>
 <footer><span>Y2 ARCHIVE</span><a href="#" id="admLink">ADMIN</a></footer>
 
-<div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bAdd">章を追加</button><button id="bWork">作品を追加</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
+<div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bWork">作品を追加</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
 <div class="login" id="login" role="dialog" aria-label="管理者ログイン">
   <div class="lb"><button class="x" type="button" id="lx">CLOSE ✕</button><h4>Administrator</h4>
     <input id="lmail" type="email" placeholder="メールアドレス" autocomplete="username">
@@ -431,17 +431,18 @@ let gi=[0,1,3,5,7,10,11];let gr=null;
 function pickLine(ch){
   const ps=((ch&&ch.paragraphs)||[]).map(p=>String(p).trim());
   const isD=p=>/^[「『]/.test(p||'');
+  const clip=p=>{if(p.length<=340)return p;const cut=p.slice(0,340);const i=cut.lastIndexOf('。');return i>=0?cut.slice(0,i+1):''};
   const cand=[];
   ps.forEach((p,i)=>{
     if(!p)return;
     if(isD(p)){
-      (p.match(/「[^」]*」|『[^』]*』/g)||[]).forEach(m=>{if(m.length-2>10)cand.push(m)});
+      (p.match(/「[^」]*」|『[^』]*』/g)||[]).forEach(m=>{const inner=m.slice(1,-1);if(m.length<=340&&inner.length>10)cand.push(m)});
     }else if(!/^[（(]/.test(p)){
-      const len=p.length;
-      if(len<=10)return;
-      const inTalk=isD(ps[i-1])||isD(ps[i+1]);
-      if(len<30||(inTalk&&len<60))return;
-      cand.push(p);
+      if(p.length<30)return;
+      const adj=isD(ps[i-1])||isD(ps[i+1]);
+      if(adj&&p.length<20)return;
+      const t=clip(p);
+      if(t.length>=30)cand.push(t);
     }
   });
   if(cand.length)return cand[Math.floor(Math.random()*cand.length)];
@@ -493,7 +494,7 @@ function renderStory(id){
   scn=scn.map((s,k)=>({...s,k:'Chapter '+ROMAN[k],c:chs[k].title||s.c,n:String(chs[k].n||s.n||'').slice(0,2)}));
   S=scn;gi=S.map((_,i)=>i);
   const header=isG?DATA.orig.header:
-    `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
+    `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line" data-s="en">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
   let body;
   if(EDIT){body=chs.map(c=>`<section class="chap">${chapEditHTML(c)}</section>`).join('')}
   else if(isG&&!(OV.stories[id]&&OV.stories[id].chapters)){body=oldG?oldChaptersHTML(RAW.chapters):DATA.orig.prose}
@@ -512,7 +513,7 @@ function renderStory(id){
   prose=$('prose');cv=$('canvas');gr=$('grid');
   buildScenes();buildGallery();watchProse();
   cur=-1;setScene(0);onScroll();
-  if(EDIT){renum();bindChapterEdit();}
+  if(EDIT){renum();bindChapterEdit();const ar=document.createElement('div');ar.className='addch-row';ar.style.cssText='text-align:center;padding:2rem 0';ar.innerHTML='<button type="button" id="addChBtn" style="border:1px dashed #8B5E3C;background:#fff;padding:.6rem 1.2rem;font-size:13px;letter-spacing:.15em">+ 章を追加</button>';$('prose').after(ar);$('addChBtn').onclick=addChapter;}
 }
 /* ---------- 章一覧（作品ページ） ---------- */
 function openChapters(){
@@ -639,11 +640,11 @@ function addWork(){
   const id='s'+Date.now().toString(36);
   const s={id,group:'新しい作品',title:'新しい作品',en:'New Work.',summary:'一言を入力してください。',tag:'',chapters:[{title:'',paragraphs:[]}]};
   DATA.stories.push(s);OV.added=(OV.added||[]).concat([s]);
+  OV.meta[id]={hidden:true};
   location.hash='#'+id;
   if(sid()===id)render();
 }
 $('bWork').onclick=()=>{if(EDIT)addWork();else $('est').textContent='管理画面で使用してください'};
-$('bAdd').onclick=()=>{if($('prose')&&EDIT)addChapter();else $('est').textContent='作品ページで使用してください'};
 function collect(){
   if(STORY&&document.getElementById('prose')){
     const id=STORY.id;
@@ -652,6 +653,7 @@ function collect(){
     const t=document.querySelector('[data-s="title"]'),s=document.querySelector('[data-s="summary"]');
     if(t)m.title=t.textContent.trim();
     if(s)m.summary=s.textContent.trim();
+    const en=document.querySelector('[data-s="en"]');if(en)m.en=en.textContent.trim();
     OV.meta[id]=m;
   }else{
     OV.top={eyebrow:document.querySelector('[data-e="eyebrow"]').textContent.trim(),title:document.querySelector('[data-e="title"]').textContent.trim(),
