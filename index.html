@@ -230,6 +230,7 @@ body.editing .hero [data-e]{outline:1px dashed rgba(139,94,60,.6);outline-offset
 body.editing .works a{pointer-events:none}
 body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px dashed rgba(139,94,60,.6);outline-offset:3px}
 .portal{background:linear-gradient(rgba(253,252,248,.18),rgba(253,252,248,.42)),url("assets/cover.png") center/cover no-repeat}
+.portal h1 em{text-shadow:0 0 14px rgba(253,252,248,.95),0 0 4px rgba(253,252,248,.9)}
 </style>
 </head>
 <body>
@@ -480,7 +481,7 @@ $('lgo').onclick=async()=>{
 $('lpass').addEventListener('keydown',e=>{if(e.key==='Enter')$('lgo').click()});
 let taps=0,tapAt=0;
 document.addEventListener('click',async e=>{
-  const h=e.target.closest&&e.target.closest('#root .hero h1');if(!h)return;
+  const h=e.target.closest&&e.target.closest('#root .hero h1, #root .portal h1');if(!h)return;
   const n=Date.now();taps=(n-tapAt<900)?taps+1:1;tapAt=n;
   if(taps>=5){taps=0;if(auth&&await isAdmin(auth.currentUser)){EDIT=true;render()}else{$('login').classList.add('open');$('lmail').focus()}}
 });
