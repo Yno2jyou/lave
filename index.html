@@ -305,7 +305,7 @@ body.editing .chap-btn{display:none}
 .hero,.portal{isolation:isolate}
 .hero{background:none}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(rgba(253,252,248,.18),rgba(253,252,248,.42)),url("assets/cover.png") center/cover no-repeat;animation:bgin 1.4s ease both}
-.portal{background:none}
+.portal{background:linear-gradient(rgba(253,252,248,.18),rgba(253,252,248,.42)),url("assets/cover.png") center/cover no-repeat}
 .portal::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 80% 20%,rgba(139,94,60,.18),transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(91,100,112,.12),transparent 50%);animation:bgin 1.4s ease both}
 .hero-in>*,.portal>*{animation:rise 1.6s cubic-bezier(.2,.7,.2,1) both;animation-delay:1.3s}
 .hero-in>.jp-t{animation-delay:1.5s}
@@ -428,7 +428,7 @@ addEventListener('resize',onScroll);
 /* gallery */
 let gi=[0,1,3,5,7,10,11];let gr=null;
 /* 章からランダムに1つ：まとまった地の文1段落 or セリフ1つ（短い相槌・会話の間の短い地の文は除く） */
-function pickLine(ch){
+function lineCands(ch){
   const ps=((ch&&ch.paragraphs)||[]).map(p=>String(p).trim());
   const isD=p=>/^[「『]/.test(p||'');
   const clip=p=>{if(p.length<=340)return p;const cut=p.slice(0,340);const i=cut.lastIndexOf('。');return i>=0?cut.slice(0,i+1):''};
@@ -445,15 +445,23 @@ function pickLine(ch){
       if(t.length>=30)cand.push(t);
     }
   });
-  if(cand.length)return cand[Math.floor(Math.random()*cand.length)];
-  return ps.slice().sort((a,b)=>b.length-a.length)[0]||'';
+  if(!cand.length){const l=ps.slice().sort((a,b)=>b.length-a.length)[0];if(l)cand.push(l)}
+  return cand;
+}
+let lastLine='';
+function pickLine(ch,all){
+  let c=lineCands(ch).filter(x=>x!==lastLine);
+  if(!c.length&&all)c=all.flatMap(lineCands).filter(x=>x!==lastLine);
+  if(!c.length)c=lineCands(ch);
+  const r=c.length?c[Math.floor(Math.random()*c.length)]:'';
+  lastLine=r;return r;
 }
 function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k%7+1);b.style.setProperty('--g',s.g);
  b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}<\/small><i>${nl(s.k)}<\/i><\/span>`;
  b.onclick=()=>{const chs=(EDIT&&document.querySelector('#prose textarea.cb'))?chaptersNow():((STORY&&STORY.chapters)||[]);const ch=chs[n]||{};
     const mb=document.getElementById('mbox');mb.classList.add('q');mb.style.setProperty('--g',s.g);
     document.getElementById('mh').textContent=s.k+(ch.title?' · '+ch.title:'');
-    document.getElementById('mp').textContent=pickLine(ch)||s.c;
+    document.getElementById('mp').textContent=pickLine(ch,chs)||s.c;
     document.getElementById('modal').classList.add('open')};
  gr.appendChild(b)})}
 
@@ -467,7 +475,7 @@ const $=id=>document.getElementById(id);
 let fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||16;
 function sz(d){fs=Math.min(26,Math.max(9,fs+d));document.documentElement.style.setProperty('--fs',fs+'px')}
 let RAW={},OV={stories:{},top:{},meta:{},added:[]},EDIT=false,STORY=null,root=null;
-const sid=()=>(location.hash.match(/^#(s\d+)$/)||[])[1];
+const sid=()=>(location.hash.match(/^#(s[0-9a-z]+)$/i)||[])[1];
 function topD(){const e=OV.top.eyebrow;return{eyebrow:(e&&!/SYNAPTIC/.test(e))?e:'Y2 ARCHIVE — A COLLECTION',title:OV.top.title||'夭折した天使たちへ',en:OV.top.en||'To the Angels Gone Too Soon.',abstract:OV.top.abstract||'名前も顔も知らない誰かを思う、短編と長編の閲覧アーカイブ。'}}
 const metaOf=s0=>({...s0,...(OV.meta[s0.id]||{})});
 const storyOf=s0=>{const m=metaOf(s0);const o=OV.stories[s0.id];return o&&o.chapters?{...m,chapters:o.chapters}:m};
@@ -562,6 +570,11 @@ function bindWorkControls(){
     try{collect()}catch(e){}  /* トップ画面で編集した文言を保持してから移動 */
     location.hash='#'+b.dataset.id;
   });
+  document.querySelectorAll('.works li[data-w-id]').forEach(li=>li.addEventListener('click',e=>{
+    if(e.target.closest('[data-w],select,button,a'))return;
+    try{collect()}catch(err){}
+    location.hash='#'+li.dataset.wId;
+  }));
   document.querySelectorAll('.pubsel').forEach(sel=>sel.onchange=()=>{
     OV.meta[sel.dataset.id]={...(OV.meta[sel.dataset.id]||{}),hidden:sel.value==='hid'};
     $('est').textContent='公開状態を変更しました（保存で確定）';
@@ -637,12 +650,12 @@ function addChapter(){
 }
 /* 作品追加：新しい作品を一覧の末尾に作成し、その作品ページを開く */
 function addWork(){
-  const id='s'+Date.now().toString(36);
+  try{collect()}catch(e){}
+  const id='s'+Date.now();
   const s={id,group:'新しい作品',title:'新しい作品',en:'New Work.',summary:'一言を入力してください。',tag:'',chapters:[{title:'',paragraphs:[]}]};
   DATA.stories.push(s);OV.added=(OV.added||[]).concat([s]);
   OV.meta[id]={hidden:true};
-  location.hash='#'+id;
-  if(sid()===id)render();
+  location.hash='#'+id;  /* hashchange が作品ページを描画する */
 }
 $('bWork').onclick=()=>{if(EDIT)addWork();else $('est').textContent='管理画面で使用してください'};
 function collect(){
