@@ -249,7 +249,8 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 .works li.hid{opacity:.5}
 .body.loading{}
 body.loading #root{opacity:0}
-#root{transition:opacity .4s ease}
+#root{transition:opacity .45s ease,transform .45s ease}
+#root.leave{opacity:0;transform:translateY(16px)}
 </style>
 </head>
 <body class="loading">
@@ -585,7 +586,19 @@ addEventListener('keydown',e=>{if(e.key==='Escape'){$('login').classList.remove(
 /* 保存データを読み込んでから初回描画する（初期画面の一瞬の表示を防ぐ） */
 let LOADED=false;
 function start(){if(LOADED)return;LOADED=true;document.body.classList.remove('loading');render()}
-addEventListener('hashchange',()=>{if(LOADED)render()});
+/* 画面遷移：フェードアウト → 描画 → フェードイン */
+let navBusy=false;
+addEventListener('hashchange',()=>{
+  if(!LOADED)return;
+  if(navBusy){render();return}
+  navBusy=true;
+  const r=$('root');
+  r.classList.add('leave');
+  setTimeout(()=>{
+    render();window.scrollTo(0,0);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{r.classList.remove('leave');navBusy=false}));
+  },450);
+});
 if(TEXT_DOC){
   TEXT_DOC.get().then(s=>{if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{},added:RAW.added||[]};(OV.added).forEach(s=>{if(!DATA.stories.find(x=>x.id===s.id))DATA.stories.push(s)})}}).catch(()=>{}).finally(start);
   setTimeout(start,4000);
