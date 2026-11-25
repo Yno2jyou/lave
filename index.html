@@ -316,6 +316,16 @@ body.editing .chap-btn{display:none}
 body.editing .hero::before,body.editing .portal::before{animation:none}
 body.editing .hero-in>*,body.editing .portal>*,body.editing .hero .wm,body.editing .portal .ghost{animation:none}
 @media(prefers-reduced-motion:reduce){.hero::before,.portal::before,.hero-in>*,.portal>*{animation:none!important}}
+
+/* 作品ページ冒頭：先に文字、その後に背景 */
+.portal>*{animation-delay:.3s}
+.portal h1{animation-delay:.6s}
+.portal .abs{animation-delay:1s}
+.portal>.enter{animation-delay:1.4s}
+.portal::before{animation:bgin 1.8s 2s ease both}
+.portal .ghost{animation:bgin 2s 2s ease both}
+body.editing .portal::before,body.editing .portal>*,body.editing .portal .ghost{animation:none}
+@media(prefers-reduced-motion:reduce){.portal::before,.portal>*{animation:none!important}}
 </style>
 </head>
 <body class="loading">
