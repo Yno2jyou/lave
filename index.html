@@ -241,12 +241,21 @@ body.editing [data-e],body.editing [data-w],body.editing .portal [data-s]{outlin
 .cedit .cdel:hover{background:#a33;color:#fff}
 .chap.dragging{opacity:.6;box-shadow:0 8px 24px rgba(0,0,0,.18);background:var(--paper)}
 .cedit .mv{touch-action:none;min-width:44px;min-height:44px}
+.cedit .up,.cedit .dn{border:1px solid var(--bronze);background:#fff;padding:.4rem .7rem;cursor:pointer;font-size:16px;color:var(--bronze);min-width:44px;min-height:44px}
+.cedit .up:hover,.cedit .dn:hover{background:var(--bronze);color:#fff}
+.modal .box.q{justify-content:center;align-items:center;text-align:center}
+.modal .box.q h4{position:absolute;top:2rem;left:3rem;right:6rem;text-align:left;font-family:'Inter',sans-serif;font-style:normal;font-size:.8rem;letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+.modal .box.q p{max-width:36rem;margin:0;font-size:1.05rem;line-height:2.1}
+@media(max-width:820px){.modal .box.q{padding:4.5rem 1.6rem 2.5rem}.modal .box.q h4{left:1.6rem;top:1.6rem}}
 @media(max-width:820px){.cedit{flex-wrap:wrap}#editor{bottom:8px;gap:6px}#editor button{padding:.45rem .6rem}}
 .wctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:.8rem}
 .pubsel{border:1px solid var(--bronze);background:#fff;padding:.4rem .6rem;font-size:13px}
 .wdel{border:1px solid #a33;background:#fff;color:#a33;padding:.4rem .8rem;font-size:12px}
 .wdel:hover{background:#a33;color:#fff}
 .works li.hid{opacity:.5}
+body.editing .works li{position:relative}
+.works .wgo{display:block;margin:1rem 0 0 auto;border:1px solid var(--bronze);background:#fff;color:var(--bronze);min-width:48px;min-height:44px;padding:.3rem .9rem;font-size:20px;line-height:1;cursor:pointer;transition:.3s}
+.works .wgo:hover{background:var(--bronze);color:#fff}
 .body.loading{}
 body.loading #root{opacity:0}
 #root{transition:opacity .45s ease,transform .45s ease}
@@ -390,9 +399,33 @@ addEventListener('scroll',onScroll,{passive:true});
 addEventListener('resize',onScroll);
 /* gallery */
 let gi=[0,1,3,5,7,10,11];let gr=null;
-function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k+1);b.style.setProperty('--g',s.g);
+/* 章からランダムに1つ：まとまった地の文1段落 or セリフ1つ（短い相槌・会話の間の短い地の文は除く） */
+function pickLine(ch){
+  const ps=((ch&&ch.paragraphs)||[]).map(p=>String(p).trim());
+  const isD=p=>/^[「『]/.test(p||'');
+  const cand=[];
+  ps.forEach((p,i)=>{
+    if(!p)return;
+    if(isD(p)){
+      (p.match(/「[^」]*」|『[^』]*』/g)||[]).forEach(m=>{if(m.length-2>10)cand.push(m)});
+    }else if(!/^[（(]/.test(p)){
+      const len=p.length;
+      if(len<=10)return;
+      const inTalk=isD(ps[i-1])||isD(ps[i+1]);
+      if(len<30||(inTalk&&len<60))return;
+      cand.push(p);
+    }
+  });
+  if(cand.length)return cand[Math.floor(Math.random()*cand.length)];
+  return ps.slice().sort((a,b)=>b.length-a.length)[0]||'';
+}
+function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k%7+1);b.style.setProperty('--g',s.g);
  b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}<\/small><i>${nl(s.k)}<\/i><\/span>`;
- b.onclick=()=>{document.getElementById('mbox').style.setProperty('--g',s.g);document.getElementById('mh').textContent=s.k;document.getElementById('mp').textContent=s.c;document.getElementById('modal').classList.add('open')};
+ b.onclick=()=>{const chs=(EDIT&&document.querySelector('#prose textarea.cb'))?chaptersNow():((STORY&&STORY.chapters)||[]);const ch=chs[n]||{};
+    const mb=document.getElementById('mbox');mb.classList.add('q');mb.style.setProperty('--g',s.g);
+    document.getElementById('mh').textContent=s.k+(ch.title?' · '+ch.title:'');
+    document.getElementById('mp').textContent=pickLine(ch)||s.c;
+    document.getElementById('modal').classList.add('open')};
  gr.appendChild(b)})}
 
 
@@ -430,7 +463,7 @@ function renderStory(id){
   let scn=isG?chs.map((c,k)=>({...(S_BASE[k]||gen[k]),...pick(RAW.scenes&&RAW.scenes[k])})):gen;
   /* 右側カード：見出しは「Chapter＋章番号」、その下は章タイトル（保存データより優先） */
   scn=scn.map((s,k)=>({...s,k:'Chapter '+ROMAN[k],c:chs[k].title||s.c,n:String(chs[k].n||s.n||'').slice(0,2)}));
-  S=scn;gi=(isG?[0,1,3,5,7,10,11]:[0,1,2,3,4,5,6]).filter(i=>i<S.length);
+  S=scn;gi=S.map((_,i)=>i);
   const header=isG?DATA.orig.header:
     `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
   let body;
@@ -481,7 +514,7 @@ function renderTop(){
   const vis=DATA.stories.filter(isVisible);
   $('works').innerHTML=vis.map((s0,k)=>{const s=storyOf(s0);const m=OV.meta[s0.id]||{};const A=EDIT?'div':'a';const H=EDIT?'':` href="#${s0.id}"`;
     const ctl=EDIT?`<div class="wctl"><select class="pubsel" data-id="${s0.id}"><option value="pub"${m.hidden?'':' selected'}>公開</option><option value="hid"${m.hidden?' selected':''}>非公開</option></select><button type="button" class="wdel" data-id="${s0.id}">作品を削除</button></div>`:'';
-    return `<li class="${k%2?'r':''}${m.hidden?' hid':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}>${ctl}</li>`}).join('');
+    return `<li class="${k%2?'r':''}${m.hidden?' hid':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}>${ctl}${EDIT?`<button type="button" class="wgo" data-id="${s0.id}" title="閲覧画面で編集" aria-label="閲覧画面で編集">→</button>`:''}</li>`}).join('');
   if(EDIT)bindWorkControls();
   $('enterBtn').onclick=()=>$('gallery').scrollIntoView();
   const items=[...document.querySelectorAll('#works li')];
@@ -496,6 +529,10 @@ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
 /* 公開状態・削除（管理画面のみで操作） */
 const isVisible=s=>{const m=OV.meta[s.id]||{};return !m.deleted&&(EDIT||!m.hidden)};
 function bindWorkControls(){
+  document.querySelectorAll('.wgo').forEach(b=>b.onclick=()=>{
+    try{collect()}catch(e){}  /* トップ画面で編集した文言を保持してから移動 */
+    location.hash='#'+b.dataset.id;
+  });
   document.querySelectorAll('.pubsel').forEach(sel=>sel.onchange=()=>{
     OV.meta[sel.dataset.id]={...(OV.meta[sel.dataset.id]||{}),hidden:sel.value==='hid'};
     $('est').textContent='公開状態を変更しました（保存で確定）';
@@ -525,51 +562,49 @@ function bindEdit(){
   /* 大きな章番号は全角2文字まで表示（入力は自由、離れたときに2文字に整える） */
   document.querySelectorAll('.canvas .big,.door .big').forEach(el=>{el.onblur=()=>{el.textContent=el.textContent.trim().slice(0,2)}});
 }
+/* 大きな章番号は章に付いて移動する（画面右の表示は位置順なので、操作の前後で同期） */
+function pullN(){const bigs=[...document.querySelectorAll('.canvas .big')];document.querySelectorAll('#prose section.chap').forEach((sec,k)=>{if(bigs[k])sec.dataset.n=bigs[k].textContent.trim().slice(0,2)})}
+function pushN(){const bigs=[...document.querySelectorAll('.canvas .big')];document.querySelectorAll('#prose section.chap').forEach((sec,k)=>{if(bigs[k])bigs[k].textContent=sec.dataset.n||''})}
 function chaptersNow(){
-  const bigs=[...document.querySelectorAll('.canvas .big')];
+  pullN();
   return [...document.querySelectorAll('#prose section.chap')].map((sec,k)=>{
-    const n=((bigs[k]&&bigs[k].textContent)||'').trim().slice(0,2);
+    const n=(sec.dataset.n||'').trim().slice(0,2);
     return{title:(sec.querySelector('input.ct')||{value:''}).value.trim(),
       paragraphs:(sec.querySelector('textarea.cb')||{value:''}).value.split('\n').map(x=>x.trim()).filter(Boolean),...(n?{n}:{})};
   });
 }
 /* 章の編集欄（操作ボタン・章タイトル・本文） */
-function chapEditHTML(c){return `<div class="cedit"><button type="button" class="mv" title="ドラッグで移動">↕︎</button><button type="button" class="cdel">この章を削除</button></div><div class="no"></div><label class="lbl">章タイトル</label><input class="ef ct" placeholder="章タイトル（任意）" value="${esc(c.title||'')}"><label class="lbl">本文（1行＝1段落）</label><textarea class="ef cb">${esc((c.paragraphs||[]).join('\n'))}</textarea>`}
+function chapEditHTML(c){return `<div class="cedit"><button type="button" class="up" title="ひとつ上へ">↑</button><button type="button" class="dn" title="ひとつ下へ">↓</button><button type="button" class="cdel">この章を削除</button></div><div class="no"></div><label class="lbl">章タイトル</label><input class="ef ct" placeholder="章タイトル（任意）" value="${esc(c.title||'')}"><label class="lbl">本文（1行＝1段落）</label><textarea class="ef cb">${esc((c.paragraphs||[]).join('\n'))}</textarea>`}
 function renum(){document.querySelectorAll('#prose section.chap .no').forEach((el,i)=>el.textContent=ROMAN[i])}
+function moveChap(sec,dir){
+  const other=dir<0?sec.previousElementSibling:sec.nextElementSibling;
+  if(!other||!other.classList.contains('chap'))return;
+  pullN();
+  const y=sec.getBoundingClientRect().top;
+  if(dir<0)other.before(sec);else other.after(sec);
+  pushN();renum();
+  window.scrollBy({top:sec.getBoundingClientRect().top-y,behavior:'instant'});
+}
 function bindChapterEdit(){
   const prose=$('prose');if(!prose)return;
   prose.querySelectorAll('section.chap').forEach(sec=>{
-    const mv=sec.querySelector('.mv');
-    mv.style.touchAction='none';
-    /* ポインター操作（マウス・タッチ共通）で章を並べ替え */
-    mv.onpointerdown=e=>{
-      e.preventDefault();
-      sec.classList.add('dragging');
-      const move=ev=>{
-        const y=ev.clientY;
-        for(const s of prose.querySelectorAll('section.chap')){
-          if(s===sec)continue;
-          const r=s.getBoundingClientRect();
-          if(y>r.top&&y<r.bottom){prose.insertBefore(sec,y<r.top+r.height/2?s:s.nextSibling);break}
-        }
-      };
-      const up=()=>{
-        window.removeEventListener('pointermove',move);
-        window.removeEventListener('pointerup',up);
-        window.removeEventListener('pointercancel',up);
-        sec.classList.remove('dragging');renum();
-      };
-      window.addEventListener('pointermove',move);
-      window.addEventListener('pointerup',up);
-      window.addEventListener('pointercancel',up);
-    };
-    sec.querySelector('.cdel').onclick=()=>{if(!confirm('この章を削除しますか？'))return;sec.remove();renum()};
+    sec.querySelector('.up').onclick=()=>moveChap(sec,-1);
+    sec.querySelector('.dn').onclick=()=>moveChap(sec,1);
+    sec.querySelector('.cdel').onclick=()=>{if(!confirm('この章を削除しますか？'))return;pullN();sec.remove();pushN();renum()};
   });
 }
+/* 章の追加：いま画面に映っている章の直下に挿入 */
 function addChapter(){
-  const prose=$('prose');const sec=document.createElement('section');sec.className='chap';
-  sec.innerHTML=chapEditHTML({title:'',paragraphs:[]});prose.appendChild(sec);
-  renum();bindChapterEdit();sec.scrollIntoView({behavior:'smooth',block:'center'});sec.querySelector('.ct').focus();
+  const prose=$('prose');
+  const secs=[...prose.querySelectorAll('section.chap')];
+  const sec=document.createElement('section');sec.className='chap';
+  sec.innerHTML=chapEditHTML({title:'',paragraphs:[]});
+  pullN();
+  if(secs.length){const cur=secs[Math.min(chapterIndex(),secs.length-1)];cur.after(sec)}else prose.appendChild(sec);
+  const pos=[...prose.querySelectorAll('section.chap')].indexOf(sec);
+  sec.dataset.n=ROMAN[pos]?ROMAN[pos].slice(0,2):'';
+  pushN();renum();bindChapterEdit();
+  sec.scrollIntoView({behavior:'smooth',block:'center'});sec.querySelector('.ct').focus({preventScroll:true});
 }
 /* 作品追加：新しい作品を一覧の末尾に作成し、その作品ページを開く */
 function addWork(){
