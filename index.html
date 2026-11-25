@@ -325,7 +325,7 @@ let scenes=[],cur=-1;
 function buildScenes(){
   cv.innerHTML='';
   S.forEach((s,i)=>{const d=document.createElement('div');d.className='scene';d.style.setProperty('--g',s.g);
-   d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}<\/div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}<\/div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-s="t">${esc(s.t)}<\/span><\/div><div class="kw" data-s="k">${nl(s.k)}<\/div><div class="cap" data-s="c">${nl(s.c)}<\/div>`;cv.appendChild(d)});
+   d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}<\/div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}<\/div>`:''}<div class="kw" data-s="k">${nl(s.k)}<\/div><div class="cap" data-s="c">${nl(s.c)}<\/div>`;cv.appendChild(d)});
   scenes=[...cv.children];
   const k=cur;cur=-1;setScene(k<0?0:k);
   syncDoors();
@@ -336,7 +336,7 @@ function syncDoors(){
     const old=c.querySelector(':scope>.door');if(old)old.remove();
     const s=S[i];if(!s)return;
     const d=document.createElement('div');d.className='door';d.dataset.i=i;d.style.setProperty('--g',s.g);
-    d.innerHTML=`<div class="big" data-d="n">${esc(s.n)}<\/div>${s.r?`<div class="rcpt" data-d="rh">${s.rh||RC_DEF}<\/div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-d="t">${esc(s.t)}<\/span><\/div><div class="kw" data-d="k">${nl(s.k)}<\/div><div class="cap" data-d="c">${nl(s.c)}<\/div>`;
+    d.innerHTML=`<div class="big" data-d="n">${esc(s.n)}<\/div>${s.r?`<div class="rcpt" data-d="rh">${s.rh||RC_DEF}<\/div>`:''}<div class="kw" data-d="k">${nl(s.k)}<\/div><div class="cap" data-d="c">${nl(s.c)}<\/div>`;
     if(document.body.classList.contains('editing'))d.querySelectorAll('[data-d]').forEach(el=>{el.setAttribute('contenteditable','true');el.spellcheck=false});
     c.insertBefore(d,c.firstChild);
     (window._dio=window._dio||new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');window._dio.unobserve(e.target)}}),{threshold:.3})).observe(d);
@@ -395,7 +395,7 @@ function renderStory(id){
   const pick=v=>Object.fromEntries(['c','t','n','rh'].filter(f=>v&&v[f]).map(f=>[f,v[f]]));
   let scn=isG?chs.map((c,k)=>({...(S_BASE[k]||gen[k]),...pick(RAW.scenes&&RAW.scenes[k])})):gen;
   /* 右側カード：見出しは「Chapter＋章番号」、その下は章タイトル（保存データより優先） */
-  scn=scn.map((s,k)=>({...s,k:'Chapter '+ROMAN[k],c:chs[k].title||s.c}));
+  scn=scn.map((s,k)=>({...s,k:'Chapter '+ROMAN[k],c:chs[k].title||s.c,n:String(chs[k].n||s.n||'').slice(0,2)}));
   S=scn;gi=(isG?[0,1,3,5,7,10,11]:[0,1,2,3,4,5,6]).filter(i=>i<S.length);
   const header=isG?DATA.orig.header:
     `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
@@ -467,13 +467,18 @@ function bindEdit(){
   $('editor').style.display=EDIT?'flex':'none';
   $('est').textContent=EDIT?'編集モード — 文言・章タイトル・本文を編集できます':'';
   if(!EDIT)return;
-  const sel=STORY&&document.getElementById('prose')?'.portal [data-s]':'[data-e],[data-w]';
+  const sel=STORY&&document.getElementById('prose')?'.portal [data-s],.canvas .big,.door .big':'[data-e],[data-w]';
   document.querySelectorAll(sel).forEach(el=>{el.setAttribute('contenteditable','true');el.spellcheck=false});
+  /* 大きな章番号は全角2文字まで表示（入力は自由、離れたときに2文字に整える） */
+  document.querySelectorAll('.canvas .big,.door .big').forEach(el=>{el.onblur=()=>{el.textContent=el.textContent.trim().slice(0,2)}});
 }
 function chaptersNow(){
-  return [...document.querySelectorAll('#prose section.chap')].map(sec=>({
-    title:(sec.querySelector('input.ct')||{value:''}).value.trim(),
-    paragraphs:(sec.querySelector('textarea.cb')||{value:''}).value.split('\n').map(x=>x.trim()).filter(Boolean)}));
+  const bigs=[...document.querySelectorAll('.canvas .big')];
+  return [...document.querySelectorAll('#prose section.chap')].map((sec,k)=>{
+    const n=((bigs[k]&&bigs[k].textContent)||'').trim().slice(0,2);
+    return{title:(sec.querySelector('input.ct')||{value:''}).value.trim(),
+      paragraphs:(sec.querySelector('textarea.cb')||{value:''}).value.split('\n').map(x=>x.trim()).filter(Boolean),...(n?{n}:{})};
+  });
 }
 /* 章の編集欄（操作ボタン・章タイトル・本文） */
 function chapEditHTML(c){return `<div class="cedit"><button type="button" class="mv" title="ドラッグで移動">↕︎</button><button type="button" class="cdel">この章を削除</button></div><div class="no"></div><label class="lbl">章タイトル</label><input class="ef ct" placeholder="章タイトル（任意）" value="${esc(c.title||'')}"><label class="lbl">本文（1行＝1段落）</label><textarea class="ef cb">${esc((c.paragraphs||[]).join('\n'))}</textarea>`}
