@@ -328,6 +328,13 @@ body.editing .portal::before,body.editing .portal>*,body.editing .portal .ghost{
 @media(prefers-reduced-motion:reduce){.portal::before,.portal>*{animation:none!important}}
 /* 絵本の章：章扉・場面カードは挿絵そのものを表示（文字は載せない） */
 .scene.pic .big,.scene.pic .kw,.scene.pic .cap,.scene.pic .rcpt,.door.pic .big,.door.pic .kw,.door.pic .cap,.door.pic .rcpt{display:none}
+@media(min-width:821px){
+.reader.picbook{grid-template-columns:minmax(0,1fr)}
+.picbook .stage{display:none}
+.picbook .door{display:block;position:relative;overflow:hidden;width:100%;max-width:58rem;aspect-ratio:16/9;margin:0 auto 7vh}
+.picbook .door::before{content:"";position:absolute;inset:0;background:var(--g)}
+.picbook .chap{padding:4vh 0 10vh}
+}
 </style>
 </head>
 <body class="loading">
@@ -497,7 +504,7 @@ function renderStory(id){
   const srcHTML=isG?(oldG?oldChaptersHTML(RAW.chapters):DATA.orig.prose):null;
   const chs=(OV.stories[id]&&OV.stories[id].chapters)?OV.stories[id].chapters:(isG?domChapters(srcHTML):s0.chapters);
   chs.forEach(c=>{if(!c.img){const o=(s0.chapters||[]).find(x=>x.img&&(x.paragraphs||[])[0]===(c.paragraphs||[])[0]);if(o)c.img=o.img}});
-  STORY={...base,chapters:chs};
+  STORY={...base,chapters:chs};const pic=chs.some(c=>c.img);
   const gen=genScenes(chs);
   const pick=v=>Object.fromEntries(['c','t','n','rh'].filter(f=>v&&v[f]).map(f=>[f,v[f]]));
   let scn=isG?chs.map((c,k)=>({...(S_BASE[k]||gen[k]),...pick(RAW.scenes&&RAW.scenes[k])})):gen;
@@ -512,7 +519,7 @@ function renderStory(id){
   else{body=newChaptersHTML(chs)}
   root=$('root');
   root.innerHTML=`<a class="back-fixed" href="#">← 作品一覧</a>`+header+
-    `<div class="reader" id="read"><div class="text"><article class="prose" id="prose">${body}</article></div><aside class="stage" aria-hidden="true"><div class="canvas" id="canvas"></div></aside></div>`+
+    `<div class="reader${pic?' picbook':''}" id="read"><div class="text"><article class="prose" id="prose">${body}</article></div><aside class="stage" aria-hidden="true"><div class="canvas" id="canvas"></div></aside></div>`+
     `<section class="gal" id="gallery"><h2>The Gallery<br>of Small Things</h2><div class="grid" id="grid"></div></section>`+
     `<button class="chap-btn" id="chapBtn" type="button">章一覧</button><div class="chap-panel" id="chapPanel"><div class="cp-box"><div class="cp-head"><span>章一覧</span><button id="cpClose" type="button">閉じる</button></div><ol class="cp-list" id="cpList"></ol></div></div>`;
   $('chapBtn').onclick=openChapters;
