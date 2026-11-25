@@ -277,6 +277,18 @@ body.loading #loader{display:flex}
   .works .no{font-size:.9rem}
 }
 body.editing .works li{opacity:1}
+.chap-btn{position:fixed;right:14px;bottom:14px;z-index:70;background:var(--ink);color:var(--paper);border:0;padding:.7rem 1.1rem;font-size:12px;letter-spacing:.18em}
+.chap-panel{display:none;position:fixed;inset:0;z-index:95;background:rgba(10,8,6,.55);align-items:center;justify-content:center;padding:6vw}
+.chap-panel.open{display:flex}
+.cp-box{width:min(460px,100%);max-height:80vh;background:var(--paper);display:flex;flex-direction:column}
+.cp-head{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem;border-bottom:1px solid #e3dccd;font-size:13px;letter-spacing:.2em}
+.cp-head button{border:1px solid var(--ink);background:#fff;padding:.4rem .8rem;font-size:12px}
+.cp-list{list-style:none;overflow-y:auto;padding:.4rem 0}
+.cp-list button{width:100%;display:flex;gap:1rem;align-items:baseline;text-align:left;background:none;border:0;padding:.85rem 1.2rem;border-bottom:1px solid #f0ebe0;min-height:44px}
+.cp-list button:hover{background:var(--ivory)}
+.cp-no{font-family:'Playfair Display',serif;font-style:italic;color:var(--bronze);min-width:2.6rem}
+.cp-t{font-size:14px}
+body.editing .chap-btn{display:none}
 </style>
 </head>
 <body class="loading">
@@ -390,6 +402,8 @@ const S_BASE=S.map(x=>({...x}));
 const GK=Object.values(G);
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI','XXII','XXIII','XXIV','XXV'];
 const $=id=>document.getElementById(id);
+let fs=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||16;
+function sz(d){fs=Math.min(26,Math.max(9,fs+d));document.documentElement.style.setProperty('--fs',fs+'px')}
 let RAW={},OV={stories:{},top:{},meta:{},added:[]},EDIT=false,STORY=null,root=null;
 const sid=()=>(location.hash.match(/^#(s\d+)$/)||[])[1];
 function topD(){const e=OV.top.eyebrow;return{eyebrow:(e&&!/SYNAPTIC/.test(e))?e:'Y2 ARCHIVE — A COLLECTION',title:OV.top.title||'夭折した天使たちへ',en:OV.top.en||'To the Angels Gone Too Soon.',abstract:OV.top.abstract||'名前も顔も知らない誰かを思う、短編と長編の閲覧アーカイブ。'}}
@@ -426,7 +440,11 @@ function renderStory(id){
   root=$('root');
   root.innerHTML=`<a class="back-fixed" href="#">← 作品一覧</a>`+header+
     `<div class="reader" id="read"><div class="text"><article class="prose" id="prose">${body}</article></div><aside class="stage" aria-hidden="true"><div class="canvas" id="canvas"></div></aside></div>`+
-    `<section class="gal" id="gallery"><h2>The Gallery<br>of Small Things</h2><div class="grid" id="grid"></div></section>`;
+    `<section class="gal" id="gallery"><h2>The Gallery<br>of Small Things</h2><div class="grid" id="grid"></div></section>`+
+    `<button class="chap-btn" id="chapBtn" type="button">章一覧</button><div class="chap-panel" id="chapPanel"><div class="cp-box"><div class="cp-head"><span>章一覧</span><button id="cpClose" type="button">閉じる</button></div><ol class="cp-list" id="cpList"></ol></div></div>`;
+  $('chapBtn').onclick=openChapters;
+  $('cpClose').onclick=()=>$('chapPanel').classList.remove('open');
+  $('chapPanel').onclick=e=>{if(e.target.id==='chapPanel')$('chapPanel').classList.remove('open')};
   if(isG){const p=root.querySelector('.portal');const m=OV.meta[id]||{};
     if(m.title)p.querySelector('em').textContent=m.title;else if(RAW.title)p.querySelector('h1').innerHTML=RAW.title;
     if(m.summary)p.querySelector('.abs').textContent=m.summary;else if(RAW.abstract)p.querySelector('.abs').innerHTML=RAW.abstract;}
@@ -434,6 +452,21 @@ function renderStory(id){
   buildScenes();buildGallery();watchProse();
   cur=-1;setScene(0);onScroll();
   if(EDIT){renum();bindChapterEdit();}
+}
+/* ---------- 章一覧（作品ページ） ---------- */
+function openChapters(){
+  const secs=[...document.querySelectorAll('#prose section.chap')];
+  $('cpList').innerHTML=secs.map((sec,i)=>{
+    const h=sec.querySelector('h2'),inp=sec.querySelector('input.ct');
+    const p=(sec.querySelector('p')||{textContent:''}).textContent.trim();
+    const title=((h?h.textContent:(inp?inp.value:''))||'').trim()||(p.slice(0,24)+(p.length>24?'…':''));
+    return `<li><button type="button" data-i="${i}"><span class="cp-no">${ROMAN[i]}</span><span class="cp-t">${esc(title)}</span></button></li>`;
+  }).join('');
+  $('cpList').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    $('chapPanel').classList.remove('open');
+    secs[+b.dataset.i].scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('chapPanel').classList.add('open');
 }
 /* ---------- 収録作品一覧 ---------- */
 function renderTop(){
