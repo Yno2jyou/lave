@@ -247,9 +247,12 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 .wdel{border:1px solid #a33;background:#fff;color:#a33;padding:.4rem .8rem;font-size:12px}
 .wdel:hover{background:#a33;color:#fff}
 .works li.hid{opacity:.5}
+.body.loading{}
+body.loading #root{opacity:0}
+#root{transition:opacity .4s ease}
 </style>
 </head>
-<body>
+<body class="loading">
 <div id="bar"></div>
 <div class="ctl"><button onclick="sz(-1)" aria-label="文字を小さく">A−</button><button onclick="sz(1)" aria-label="文字を大きく">A＋</button></div>
 <main id="root"></main>
@@ -383,8 +386,8 @@ function renderStory(id){
   const gen=genScenes(chs);
   const pick=v=>Object.fromEntries(['c','t','n','rh'].filter(f=>v&&v[f]).map(f=>[f,v[f]]));
   let scn=isG?chs.map((c,k)=>({...(S_BASE[k]||gen[k]),...pick(RAW.scenes&&RAW.scenes[k])})):gen;
-  /* 右側カードの見出しは「Chapter＋章タイトル」（保存データより優先） */
-  scn=scn.map((s,k)=>({...s,k:'Chapter '+(chs[k].title||ROMAN[k])}));
+  /* 右側カード：見出しは「Chapter＋章番号」、その下は章タイトル（保存データより優先） */
+  scn=scn.map((s,k)=>({...s,k:'Chapter '+ROMAN[k],c:chs[k].title||s.c}));
   S=scn;gi=(isG?[0,1,3,5,7,10,11]:[0,1,2,3,4,5,6]).filter(i=>i<S.length);
   const header=isG?DATA.orig.header:
     `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
@@ -579,9 +582,14 @@ document.addEventListener('click',async e=>{
   if(taps>=5){taps=0;if(auth&&await isAdmin(auth.currentUser)){EDIT=true;render()}else{$('login').classList.add('open');$('lmail').focus()}}
 });
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('login').classList.remove('open');$('modal').classList.remove('open')}});
-addEventListener('hashchange',render);
-render();
-if(TEXT_DOC)TEXT_DOC.get().then(s=>{if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{},added:RAW.added||[]};(OV.added).forEach(s=>{if(!DATA.stories.find(x=>x.id===s.id))DATA.stories.push(s)});render()}}).catch(()=>{});
+/* 保存データを読み込んでから初回描画する（初期画面の一瞬の表示を防ぐ） */
+let LOADED=false;
+function start(){if(LOADED)return;LOADED=true;document.body.classList.remove('loading');render()}
+addEventListener('hashchange',()=>{if(LOADED)render()});
+if(TEXT_DOC){
+  TEXT_DOC.get().then(s=>{if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{},added:RAW.added||[]};(OV.added).forEach(s=>{if(!DATA.stories.find(x=>x.id===s.id))DATA.stories.push(s)})}}).catch(()=>{}).finally(start);
+  setTimeout(start,4000);
+}else start();
 </script>
 </body>
 </html>
