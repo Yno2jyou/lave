@@ -467,7 +467,8 @@ function pickLine(ch,all){
 }
 function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k%7+1);b.style.setProperty('--g',s.g);
  b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}<\/small><i>${nl(s.k)}<\/i><\/span>`;
- b.onclick=()=>{const chs=(EDIT&&document.querySelector('#prose textarea.cb'))?chaptersNow():((STORY&&STORY.chapters)||[]);const ch=chs[n]||{};
+ if(s.pic){b.innerHTML='';b.onclick=()=>{const mb=document.getElementById('mbox');mb.classList.add('q');mb.style.setProperty('--g',s.g);document.getElementById('mh').textContent='';document.getElementById('mp').textContent='';document.getElementById('modal').classList.add('open')};gr.appendChild(b);return}
+  b.onclick=()=>{const chs=(EDIT&&document.querySelector('#prose textarea.cb'))?chaptersNow():((STORY&&STORY.chapters)||[]);const ch=chs[n]||{};
     const mb=document.getElementById('mbox');mb.classList.add('q');mb.style.setProperty('--g',s.g);
     document.getElementById('mh').textContent=s.k+(ch.title?' · '+ch.title:'');
     document.getElementById('mp').textContent=pickLine(ch,chs)||s.c;
