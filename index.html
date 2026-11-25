@@ -242,6 +242,11 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 .chap.dragging{opacity:.6;box-shadow:0 8px 24px rgba(0,0,0,.18);background:var(--paper)}
 .cedit .mv{touch-action:none;min-width:44px;min-height:44px}
 @media(max-width:820px){.cedit{flex-wrap:wrap}#editor{bottom:8px;gap:6px}#editor button{padding:.45rem .6rem}}
+.wctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:.8rem}
+.pubsel{border:1px solid var(--bronze);background:#fff;padding:.4rem .6rem;font-size:13px}
+.wdel{border:1px solid #a33;background:#fff;color:#a33;padding:.4rem .8rem;font-size:12px}
+.wdel:hover{background:#a33;color:#fff}
+.works li.hid{opacity:.5}
 </style>
 </head>
 <body>
@@ -250,7 +255,7 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 <main id="root"></main>
 <footer><span>Y2 ARCHIVE</span><a href="#" id="admLink">ADMIN</a></footer>
 
-<div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bAdd">章を追加</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
+<div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bAdd">章を追加</button><button id="bWork">作品を追加</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
 <div class="login" id="login" role="dialog" aria-label="管理者ログイン">
   <div class="lb"><button class="x" type="button" id="lx">CLOSE ✕</button><h4>Administrator</h4>
     <input id="lmail" type="email" placeholder="メールアドレス" autocomplete="username">
@@ -354,7 +359,7 @@ const S_BASE=S.map(x=>({...x}));
 const GK=Object.values(G);
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI','XXII','XXIII','XXIV','XXV'];
 const $=id=>document.getElementById(id);
-let RAW={},OV={stories:{},top:{},meta:{}},EDIT=false,STORY=null,root=null;
+let RAW={},OV={stories:{},top:{},meta:{},added:[]},EDIT=false,STORY=null,root=null;
 const sid=()=>(location.hash.match(/^#(s\d+)$/)||[])[1];
 function topD(){const e=OV.top.eyebrow;return{eyebrow:(e&&!/SYNAPTIC/.test(e))?e:'Y2 ARCHIVE — A COLLECTION',title:OV.top.title||'夭折した天使たちへ',en:OV.top.en||'To the Angels Gone Too Soon.',abstract:OV.top.abstract||'名前も顔も知らない誰かを思う、短編と長編の閲覧アーカイブ。'}}
 const metaOf=s0=>({...s0,...(OV.meta[s0.id]||{})});
@@ -365,7 +370,7 @@ function domChapters(html){const t=document.createElement('template');t.innerHTM
     paragraphs:[...sec.querySelectorAll('p')].map(p=>htmlToText(p.innerHTML).trim()).filter(Boolean)}))}
 function oldChaptersHTML(chs){return chs.map((c,i)=>`<section class="chap"><div class="no">${ROMAN[i]}</div>${c.title?`<h2>${c.title}</h2>`:''}${(c.paragraphs||[]).map(p=>`<p class="${p.cls||''}">${p.html||''}</p>`).join('')}</section>`).join('')}
 function newChaptersHTML(chs){return chs.map((c,i)=>`<section class="chap"><div class="no">${ROMAN[i]}</div>${c.title?`<h2>${esc(c.title)}</h2>`:''}${c.paragraphs.map(p=>`<p class="${/^[「『（(]/.test(p)?'d':''}">${esc(p)}</p>`).join('')}</section>`).join('')}
-function genScenes(chs){return chs.map((c,i)=>{const p=c.paragraphs[0]||'';return{k:c.title||('Chapter '+ROMAN[i]),t:c.title||ROMAN[i],c:p.slice(0,56)+(p.length>56?'…':''),g:GK[i%GK.length],n:ROMAN[i]}})}
+function genScenes(chs){return chs.map((c,i)=>{const p=c.paragraphs[0]||'';return{k:'Chapter '+(c.title||ROMAN[i]),t:c.title||ROMAN[i],c:p.slice(0,56)+(p.length>56?'…':''),g:GK[i%GK.length],n:ROMAN[i]}})}
 /* ---------- 閲覧画面（作品） ---------- */
 function renderStory(id){
   const s0=DATA.stories.find(x=>x.id===id);
@@ -375,8 +380,11 @@ function renderStory(id){
   const srcHTML=isG?(oldG?oldChaptersHTML(RAW.chapters):DATA.orig.prose):null;
   const chs=(OV.stories[id]&&OV.stories[id].chapters)?OV.stories[id].chapters:(isG?domChapters(srcHTML):s0.chapters);
   STORY={...base,chapters:chs};
-  let scn=isG?S_BASE.map(x=>({...x})):genScenes(chs);
-  if(isG&&Array.isArray(RAW.scenes))RAW.scenes.forEach((v,i)=>{if(scn[i]&&v){['k','c','t','n'].forEach(f=>{if(v[f])scn[i][f]=v[f]});if(v.rh)scn[i].rh=v.rh}});
+  const gen=genScenes(chs);
+  const pick=v=>Object.fromEntries(['c','t','n','rh'].filter(f=>v&&v[f]).map(f=>[f,v[f]]));
+  let scn=isG?chs.map((c,k)=>({...(S_BASE[k]||gen[k]),...pick(RAW.scenes&&RAW.scenes[k])})):gen;
+  /* 右側カードの見出しは「Chapter＋章タイトル」（保存データより優先） */
+  scn=scn.map((s,k)=>({...s,k:'Chapter '+(chs[k].title||ROMAN[k])}));
   S=scn;gi=(isG?[0,1,3,5,7,10,11]:[0,1,2,3,4,5,6]).filter(i=>i<S.length);
   const header=isG?DATA.orig.header:
     `<header class="portal" id="top"><h1><em data-s="title">${esc(base.title)}</em><span class="en-line">${esc(base.en)}</span></h1><p class="abs" data-s="summary">${esc(base.summary)}</p><button class="enter" type="button" onclick="document.getElementById('read').scrollIntoView()">Enter the Story</button></header>`;
@@ -406,7 +414,11 @@ function renderTop(){
     <p class="abs" data-e="abstract">${esc(t.abstract)}</p>
     <button class="enter" type="button" id="enterBtn">ENTER THE ARCHIVE</button></div></header>
   <section class="constel" id="gallery"><div class="eyebrow">THE CONSTELLATION</div><h2>収録作品</h2><ol class="works" id="works"></ol></section>`;
-  $('works').innerHTML=DATA.stories.map((s0,k)=>{const s=storyOf(s0);const A=EDIT?'div':'a';const H=EDIT?'':` href="#${s0.id}"`;return `<li class="${k%2?'r':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}></li>`}).join('');
+  const vis=DATA.stories.filter(isVisible);
+  $('works').innerHTML=vis.map((s0,k)=>{const s=storyOf(s0);const m=OV.meta[s0.id]||{};const A=EDIT?'div':'a';const H=EDIT?'':` href="#${s0.id}"`;
+    const ctl=EDIT?`<div class="wctl"><select class="pubsel" data-id="${s0.id}"><option value="pub"${m.hidden?'':' selected'}>公開</option><option value="hid"${m.hidden?' selected':''}>非公開</option></select><button type="button" class="wdel" data-id="${s0.id}">作品を削除</button></div>`:'';
+    return `<li class="${k%2?'r':''}${m.hidden?' hid':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}>${ctl}</li>`}).join('');
+  if(EDIT)bindWorkControls();
   $('enterBtn').onclick=()=>$('gallery').scrollIntoView();
   const items=[...document.querySelectorAll('#works li')];
   if(EDIT||reduced){items.forEach(li=>li.classList.add('in'));}
@@ -417,9 +429,24 @@ function renderTop(){
   }
 }
 const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* 公開状態・削除（管理画面のみで操作） */
+const isVisible=s=>{const m=OV.meta[s.id]||{};return !m.deleted&&(EDIT||!m.hidden)};
+function bindWorkControls(){
+  document.querySelectorAll('.pubsel').forEach(sel=>sel.onchange=()=>{
+    OV.meta[sel.dataset.id]={...(OV.meta[sel.dataset.id]||{}),hidden:sel.value==='hid'};
+    $('est').textContent='公開状態を変更しました（保存で確定）';
+  });
+  document.querySelectorAll('.wdel').forEach(b=>b.onclick=()=>{
+    const id=b.dataset.id;const s=DATA.stories.find(x=>x.id===id);
+    if(!confirm('この作品を削除しますか？\n「'+(s?s.title:'')+'」'))return;
+    OV.meta[id]={...(OV.meta[id]||{}),deleted:true};
+    $('est').textContent='作品を削除しました（保存で確定）';
+    render();
+  });
+}
 function render(){
   const id=sid();
-  if(id&&DATA.stories.find(x=>x.id===id))renderStory(id);
+  if(id&&DATA.stories.find(x=>x.id===id&&isVisible(x)))renderStory(id);
   else{STORY=null;S=[];scenes=[];cur=-1;renderTop()}
   bindEdit();window.scrollTo(0,0);
 }
@@ -475,6 +502,15 @@ function addChapter(){
   sec.innerHTML=chapEditHTML({title:'',paragraphs:[]});prose.appendChild(sec);
   renum();bindChapterEdit();sec.scrollIntoView({behavior:'smooth',block:'center'});sec.querySelector('.ct').focus();
 }
+/* 作品追加：新しい作品を一覧の末尾に作成し、その作品ページを開く */
+function addWork(){
+  const id='s'+Date.now().toString(36);
+  const s={id,group:'新しい作品',title:'新しい作品',en:'New Work.',summary:'一言を入力してください。',tag:'',chapters:[{title:'',paragraphs:[]}]};
+  DATA.stories.push(s);OV.added=(OV.added||[]).concat([s]);
+  location.hash='#'+id;
+  if(sid()===id)render();
+}
+$('bWork').onclick=()=>{if(EDIT)addWork();else $('est').textContent='管理画面で使用してください'};
 $('bAdd').onclick=()=>{if($('prose')&&EDIT)addChapter();else $('est').textContent='作品ページで使用してください'};
 function collect(){
   if(STORY&&document.getElementById('prose')){
@@ -497,7 +533,7 @@ async function save(){
   try{
     collect();
     if(!TEXT_DOC)throw {code:'firebase-unavailable'};
-    RAW.stories=OV.stories;RAW.top=OV.top;RAW.meta=OV.meta;
+    RAW.stories=OV.stories;RAW.top=OV.top;RAW.meta=OV.meta;RAW.added=OV.added||[];
     await TEXT_DOC.set(RAW,{merge:true});
     render();
     $('est').textContent='保存しました';
@@ -545,7 +581,7 @@ document.addEventListener('click',async e=>{
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('login').classList.remove('open');$('modal').classList.remove('open')}});
 addEventListener('hashchange',render);
 render();
-if(TEXT_DOC)TEXT_DOC.get().then(s=>{if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{}};render()}}).catch(()=>{});
+if(TEXT_DOC)TEXT_DOC.get().then(s=>{if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{},added:RAW.added||[]};(OV.added).forEach(s=>{if(!DATA.stories.find(x=>x.id===s.id))DATA.stories.push(s)});render()}}).catch(()=>{});
 </script>
 </body>
 </html>
