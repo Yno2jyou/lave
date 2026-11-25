@@ -228,7 +228,7 @@ body.editing .hero [data-e]{outline:1px dashed rgba(139,94,60,.6);outline-offset
 .hero h1{color:#000}
 .hero .abs{color:#000;font-weight:400}
 
-body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px dashed rgba(139,94,60,.6);outline-offset:3px}
+body.editing [data-e],body.editing [data-w],body.editing .portal [data-s]{outline:1px dashed rgba(139,94,60,.6);outline-offset:3px}
 .portal{background:linear-gradient(rgba(253,252,248,.18),rgba(253,252,248,.42)),url("assets/cover.png") center/cover no-repeat}
 .portal h1 em{text-shadow:0 0 14px rgba(253,252,248,.95),0 0 4px rgba(253,252,248,.9)}
 .works li.rv{opacity:0;transform:translateY(40px);transition:opacity 1.6s ease,transform 1.6s ease}
@@ -467,7 +467,7 @@ function bindEdit(){
   $('editor').style.display=EDIT?'flex':'none';
   $('est').textContent=EDIT?'編集モード — 文言・章タイトル・本文を編集できます':'';
   if(!EDIT)return;
-  const sel=STORY&&document.getElementById('prose')?'[data-s]':'[data-e],[data-w]';
+  const sel=STORY&&document.getElementById('prose')?'.portal [data-s]':'[data-e],[data-w]';
   document.querySelectorAll(sel).forEach(el=>{el.setAttribute('contenteditable','true');el.spellcheck=false});
 }
 function chaptersNow(){
