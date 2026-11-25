@@ -255,7 +255,8 @@ body.editing [data-e],body.editing [data-w],body.editing .portal [data-s]{outlin
 .works li.hid{opacity:.5}
 body.editing .works li{position:relative}
 .works .wgo{display:block;margin:1rem 0 0 auto;border:1px solid var(--bronze);background:#fff;color:var(--bronze);min-width:48px;min-height:44px;padding:.3rem .9rem;font-size:20px;line-height:1;cursor:pointer;transition:.3s}
-.works .wgo:hover{background:var(--bronze);color:#fff}
+.works a.wgo{width:fit-content;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
+.works .wgo:hover,.works li:hover .wgo{background:var(--bronze);color:#fff}
 .body.loading{}
 body.loading #root{opacity:0}
 #root{transition:opacity .45s ease,transform .45s ease}
@@ -298,6 +299,23 @@ body.editing .works li{opacity:1}
 .cp-no{font-family:'Playfair Display',serif;font-style:italic;color:var(--bronze);min-width:2.6rem}
 .cp-t{font-size:14px}
 body.editing .chap-btn{display:none}
+
+/* 表示演出：先に背景、その後に文字 */
+@keyframes bgin{from{opacity:0}to{opacity:1}}
+.hero,.portal{isolation:isolate}
+.hero{background:none}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(rgba(253,252,248,.18),rgba(253,252,248,.42)),url("assets/cover.png") center/cover no-repeat;animation:bgin 1.4s ease both}
+.portal{background:none}
+.portal::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 80% 20%,rgba(139,94,60,.18),transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(91,100,112,.12),transparent 50%);animation:bgin 1.4s ease both}
+.hero-in>*,.portal>*{animation:rise 1.6s cubic-bezier(.2,.7,.2,1) both;animation-delay:1.3s}
+.hero-in>.jp-t{animation-delay:1.5s}
+.hero-in>h1,.portal h1{animation-delay:1.7s}
+.hero-in>.abs,.portal .abs{animation-delay:2s}
+.hero-in>.enter,.portal>.enter{animation-delay:2.3s}
+.hero .wm,.portal .ghost{animation:bgin 2s 1.3s ease both}
+body.editing .hero::before,body.editing .portal::before{animation:none}
+body.editing .hero-in>*,body.editing .portal>*,body.editing .hero .wm,body.editing .portal .ghost{animation:none}
+@media(prefers-reduced-motion:reduce){.hero::before,.portal::before,.hero-in>*,.portal>*{animation:none!important}}
 </style>
 </head>
 <body class="loading">
@@ -514,7 +532,7 @@ function renderTop(){
   const vis=DATA.stories.filter(isVisible);
   $('works').innerHTML=vis.map((s0,k)=>{const s=storyOf(s0);const m=OV.meta[s0.id]||{};const A=EDIT?'div':'a';const H=EDIT?'':` href="#${s0.id}"`;
     const ctl=EDIT?`<div class="wctl"><select class="pubsel" data-id="${s0.id}"><option value="pub"${m.hidden?'':' selected'}>公開</option><option value="hid"${m.hidden?' selected':''}>非公開</option></select><button type="button" class="wdel" data-id="${s0.id}">作品を削除</button></div>`:'';
-    return `<li class="${k%2?'r':''}${m.hidden?' hid':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}>${ctl}${EDIT?`<button type="button" class="wgo" data-id="${s0.id}" title="閲覧画面で編集" aria-label="閲覧画面で編集">→</button>`:''}</li>`}).join('');
+    return `<li class="${k%2?'r':''}${m.hidden?' hid':''}" data-w-id="${s0.id}"><${A}${H}><span class="no">${k+1}</span><div><h3><span data-w="title">${esc(s.title)}</span></h3><div class="sub" data-w="en">${esc(s.en)}</div><p data-w="summary">${esc(s.summary)}</p><div class="tag" data-w="tag">${esc(s.tag)}</div></div></${A}>${ctl}${EDIT?`<button type="button" class="wgo" data-id="${s0.id}" title="閲覧画面で編集" aria-label="閲覧画面で編集">→</button>`:`<a class="wgo" href="#${s0.id}" aria-label="${esc(s.title)}を読む">→</a>`}</li>`}).join('');
   if(EDIT)bindWorkControls();
   $('enterBtn').onclick=()=>$('gallery').scrollIntoView();
   const items=[...document.querySelectorAll('#works li')];
