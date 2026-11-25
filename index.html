@@ -251,12 +251,19 @@ body.editing [data-e],body.editing [data-w],body.editing [data-s]{outline:1px da
 body.loading #root{opacity:0}
 #root{transition:opacity .45s ease,transform .45s ease}
 #root.leave{opacity:0;transform:translateY(16px)}
+#loader{display:none;position:fixed;inset:0;z-index:90;background:var(--paper);flex-direction:column;align-items:center;justify-content:center;gap:1.2rem}
+body.loading #loader{display:flex}
+.spin{width:38px;height:38px;border:2px solid #e3dccd;border-top-color:var(--bronze);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#lerr{font-size:13px;color:#a33;letter-spacing:.08em}
+#lretry{border:1px solid var(--ink);padding:.5rem 1rem;font-size:12px;letter-spacing:.15em;background:#fff}
 </style>
 </head>
 <body class="loading">
 <div id="bar"></div>
 <div class="ctl"><button onclick="sz(-1)" aria-label="文字を小さく">A−</button><button onclick="sz(1)" aria-label="文字を大きく">A＋</button></div>
 <main id="root"></main>
+<div id="loader"><div class="spin"></div><p id="lerr"></p><button id="lretry" type="button" style="display:none">再読み込み</button></div>
 <footer><span>Y2 ARCHIVE</span><a href="#" id="admLink">ADMIN</a></footer>
 
 <div id="editor"><span class="st" id="est"></span><button class="primary" id="bSave">保存</button><button id="bAdd">章を追加</button><button id="bWork">作品を追加</button><button id="bCopy">本文コピー</button><button id="bCancel">やめる</button><button id="bOut">ログアウト</button></div>
@@ -599,10 +606,17 @@ addEventListener('hashchange',()=>{
     requestAnimationFrame(()=>requestAnimationFrame(()=>{r.classList.remove('leave');navBusy=false}));
   },450);
 });
+function showLoadError(){
+  $('lerr').textContent='保存データを読み込めませんでした。通信環境をご確認ください。';
+  $('lretry').style.display='inline-block';
+  $('lretry').onclick=()=>location.reload();
+}
 if(TEXT_DOC){
-  TEXT_DOC.get().then(s=>{if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{},added:RAW.added||[]};(OV.added).forEach(s=>{if(!DATA.stories.find(x=>x.id===s.id))DATA.stories.push(s)})}}).catch(()=>{}).finally(start);
-  setTimeout(start,4000);
-}else start();
+  TEXT_DOC.get().then(s=>{
+    if(s.exists){RAW=s.data()||{};OV={stories:RAW.stories||{},top:RAW.top||{},meta:RAW.meta||{},added:RAW.added||[]};(OV.added).forEach(s=>{if(!DATA.stories.find(x=>x.id===s.id))DATA.stories.push(s)})}
+    start();
+  }).catch(()=>showLoadError());
+}else showLoadError();
 </script>
 </body>
 </html>
