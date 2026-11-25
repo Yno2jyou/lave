@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ジェラール・フィリップは洗われた | Y2 Archive</title>
+<meta name="description" content="短編小説「ジェラール・フィリップは洗われた」の閲覧・ギャラリーサイト">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#FDFCF8;--ink:#1A1A1A;--bronze:#8B5E3C;--umber:#3B2A20;--slate:#5B6470;--ivory:#EFE8DA;--fs:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:'Inter','Noto Serif JP',sans-serif;line-height:1.6}
+.serif{font-family:'Playfair Display','Noto Serif JP',serif}
+.jp{font-family:'Noto Serif JP',serif}
+:focus-visible{outline:2px solid var(--bronze);outline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+/* progress */
+#bar{position:fixed;top:0;left:0;height:2px;width:0;background:var(--bronze);z-index:60}
+/* portal */
+.portal{min-height:100vh;padding:clamp(24px,5vw,72px);display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;
+background:radial-gradient(ellipse at 80% 20%,rgba(139,94,60,.18),transparent 55%),radial-gradient(ellipse at 10% 90%,rgba(91,100,112,.12),transparent 50%)}
+.portal .eyebrow{position:static;margin-bottom:auto;max-width:min(100%,calc(100% - 12rem));padding-bottom:2rem;font-size:12px;line-height:1.9;letter-spacing:.35em;text-transform:uppercase;color:var(--bronze)}
+.portal h1{font-family:'Playfair Display','Noto Serif JP',serif;font-weight:400;font-size:clamp(3rem,9vw,8rem);line-height:1.02;letter-spacing:-.01em;animation:rise 1.6s cubic-bezier(.2,.7,.2,1) both}
+.portal h1 em{display:block;font-size:.34em;font-family:'Noto Serif JP',serif;font-style:normal;font-weight:300;letter-spacing:.3em;color:var(--bronze);margin-bottom:1.2rem}
+.portal .abs{margin-top:2.5rem;max-width:34rem;font-family:'Noto Serif JP',serif;font-weight:300;font-size:1rem;line-height:2.1;color:#444;animation:rise 2s .3s cubic-bezier(.2,.7,.2,1) both}
+.enter{margin-top:3rem;align-self:flex-start;border:1px solid var(--ink);padding:1rem 2.2rem;letter-spacing:.25em;font-size:13px;text-transform:uppercase;transition:.4s;animation:rise 2s .6s both}
+.enter:hover{background:var(--ink);color:var(--paper)}
+.ghost{position:absolute;right:-2vw;top:8vh;font-family:'Playfair Display',serif;font-size:min(34vw,420px);line-height:1;color:rgba(139,94,60,.07);user-select:none;pointer-events:none}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+/* top controls */
+.ctl{position:fixed;top:14px;right:14px;z-index:50;display:flex;gap:8px}
+.ctl button{background:rgba(253,252,248,.9);backdrop-filter:blur(6px);border:1px solid #ddd5c6;padding:.55rem 1rem;font-size:12px;letter-spacing:.18em;transition:.3s}
+.ctl button:hover{border-color:var(--bronze);color:var(--bronze)}
+/* reader */
+.reader{display:grid;grid-template-columns:minmax(0,76fr) minmax(0,24fr);max-width:1720px;margin:0 auto}
+.text{padding:12vh clamp(24px,3vw,56px) 16vh clamp(24px,4vw,72px)}
+.prose{max-width:min(100%,58rem);margin:0 auto}
+.prose p{font-family:'Noto Serif JP',serif;font-size:var(--fs);line-height:2.1;margin-bottom:1.35em;font-weight:300;text-align:justify;opacity:0;transform:translateY(12px);transition:opacity 1s ease,transform 1s ease}
+.prose p.in{opacity:1;transform:none}
+.prose p.d{padding-left:1.1em;border-left:1px solid #e3dccd;margin-bottom:.75em}
+.prose p.line{text-align:center;color:var(--bronze);font-family:'Playfair Display','Noto Serif JP',serif;font-size:1.18em;margin:2.2em 0;border:0;padding:0}
+.prose p.rc{font-family:'Inter',monospace;font-size:.84em;line-height:1.95;background:var(--ivory);padding:1rem 1.2rem;border-left:2px solid var(--bronze);letter-spacing:.04em;text-align:left;margin:1.8em 0}
+.prose p.fin{text-align:center;color:var(--bronze);font-family:'Playfair Display','Noto Serif JP',serif;font-size:1.3em;margin-top:2.5em}
+.chap{padding:7vh 0 2vh}
+.prose .chap:first-child{padding-top:0}
+.prose .chap h2{font-size:clamp(1.6rem,2.2vw,2.3rem);margin:.4rem 0 1.8rem}
+.chap .no{font-family:'Playfair Display',serif;font-style:italic;color:var(--bronze);font-size:1rem;letter-spacing:.2em}
+.chap h2{font-family:'Playfair Display','Noto Serif JP',serif;font-weight:400;font-size:clamp(1.8rem,3.2vw,3rem);line-height:1.25;margin:.5rem 0 2.4rem}
+.chap p{font-family:'Noto Serif JP',serif;font-size:var(--fs);line-height:2.15;margin-bottom:1.5em;font-weight:300;text-align:justify;opacity:0;transform:translateY(14px);transition:opacity 1.1s ease,transform 1.1s ease}
+.chap p.in{opacity:1;transform:none}
+.chap p.d{text-indent:0;margin-bottom:.9em;padding-left:1em;border-left:1px solid #e3dccd}
+.chap p.rc{font-family:'Inter',monospace;font-size:.85em;line-height:1.9;background:var(--ivory);padding:1rem 1.2rem;border-left:2px solid var(--bronze);letter-spacing:.04em}
+.chap p.fin{font-family:'Playfair Display','Noto Serif JP',serif;font-size:1.35em;color:var(--bronze);text-align:center;margin-top:3em}
+.chap p{text-indent:1em}
+.chap p.d,.chap p.line,.chap p.rc,.chap p.fin{text-indent:0}
+.stage{position:sticky;top:0;height:100vh;padding:clamp(12px,1.4vw,22px) clamp(12px,1.4vw,22px) clamp(12px,1.4vw,22px) 0}
+.canvas{position:relative;height:100%;overflow:hidden;background:var(--umber)}
+.scene{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease;display:flex;flex-direction:column;justify-content:flex-end;padding:clamp(24px,4vw,64px);color:#f5eee2}
+.scene.on{opacity:1}
+.scene::before{content:"";position:absolute;inset:0;background:var(--g);transform:scale(1.15,1);transition:transform 6s ease}
+.scene.on::before{transform:scale(1,1)}
+.scene::after{content:"";position:absolute;inset:0;opacity:.22;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+.scene>*{position:relative;z-index:1}
+.scene .big{position:absolute;z-index:1;top:3vh;right:3vw;font-family:'Playfair Display',serif;font-size:min(22vw,300px);line-height:1;opacity:.14}
+.scene .kw{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.3rem,1.9vw,2.1rem);line-height:1.15}
+.scene .cap{margin-top:.7rem;max-width:19rem;font-family:'Noto Serif JP',serif;font-weight:300;font-size:.82rem;line-height:1.9;opacity:.85}
+.scene .big{font-size:min(13vw,180px)}
+.scene .tone{font-size:11px;letter-spacing:.35em;text-transform:uppercase;opacity:.65;margin-bottom:.8rem}
+.rcpt{position:absolute;z-index:1;top:50%;left:50%;transform:translate(-50%,-56%) rotate(-2deg);background:#f6f1e4;color:#222;padding:1.6rem 1.8rem;width:min(300px,70%);font-family:'Inter',monospace;font-size:12px;line-height:1.9;box-shadow:0 30px 60px rgba(0,0,0,.45)}
+.rcpt b{display:block;text-align:center;letter-spacing:.3em;margin-bottom:.6rem;font-size:15px}
+.rcpt hr{border:0;border-top:1px dashed #b8ad96;margin:.6rem 0}
+/* gallery */
+.gal{background:var(--ink);color:#eadfce;padding:16vh clamp(24px,5vw,80px)}
+.gal h2{font-family:'Playfair Display',serif;font-weight:400;font-size:clamp(2.4rem,6vw,5.5rem);line-height:1.05}
+.gal .sub{margin-top:1rem;color:#a99a85;font-family:'Noto Serif JP',serif;font-weight:300;max-width:34rem}
+.grid{margin-top:8vh;display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.card{position:relative;overflow:hidden;min-height:320px;cursor:pointer;display:flex;align-items:flex-end;padding:1.4rem;text-align:left;color:#f5eee2;transition:transform .6s}
+.card::before{content:"";position:absolute;inset:0;background:var(--g);transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.card:hover::before,.card:focus-visible::before{transform:scale(1.12,1.04)}
+.card span{position:relative}
+.card small{display:block;font-size:11px;letter-spacing:.3em;opacity:.7;margin-bottom:.4rem}
+.card i{font-family:'Playfair Display',serif;font-size:1.5rem}
+.c1{grid-column:span 7;min-height:440px}.c2{grid-column:span 5}.c3{grid-column:span 4}.c4{grid-column:span 4}.c5{grid-column:span 4}.c6{grid-column:span 5}.c7{grid-column:span 7}
+footer{padding:10vh clamp(24px,5vw,80px);font-size:13px;letter-spacing:.15em;color:var(--slate);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem 2rem}
+footer span,footer a{display:block;min-width:0;white-space:normal}
+/* constellation overlay */
+.map{position:fixed;inset:0;z-index:70;background:rgba(26,26,26,.97);color:#eadfce;display:none;overflow:auto}
+.map.open{display:block;animation:fade .5s both}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.map .close{position:fixed;top:18px;right:22px;font-size:12px;letter-spacing:.2em;border:1px solid #6d5a48;padding:.55rem 1rem;color:#eadfce}
+.map h3{font-family:'Playfair Display',serif;font-weight:400;font-size:1.3rem;padding:80px 6vw 0;color:var(--bronze);font-style:italic}
+.nodes{position:relative;min-height:80vh;padding:6vh 6vw}
+.node{position:absolute;text-align:left;padding:.9rem 1.2rem;border:1px solid #4a3d31;border-radius:999px;transition:.4s;max-width:15rem;background:rgba(255,255,255,.02)}
+.node:hover,.node:focus-visible{background:var(--bronze);border-color:var(--bronze);color:#fff}
+.node small{display:block;font-size:10px;letter-spacing:.3em;opacity:.6;text-transform:uppercase}
+.node span{font-family:'Noto Serif JP',serif;font-size:.95rem}
+@media(max-width:820px){
+ .reader{display:block;position:relative}
+ .stage{display:none}
+ :root{--fs:14px}
+ .text{position:relative;z-index:1;padding:0 28px 16vh;background:var(--paper)}
+ .prose p,.chap p{line-height:2}
+ .prose .chap h2{font-size:1.3rem;margin-bottom:1.4rem}
+ .chap .no{font-size:.9rem}
+ .portal h1{font-size:clamp(2.4rem,11vw,3.4rem)}
+ .portal h1 em{font-size:.38em}
+ .portal .abs{font-size:.88rem;line-height:2}
+ .ctl{top:10px;right:10px;gap:6px}
+ .ctl button{padding:.4rem .7rem;font-size:11px}
+ .grid{display:flex;flex-direction:column;align-items:center;gap:14px}
+ .card,.c1,.c2,.c3,.c4,.c5,.c6,.c7{grid-column:auto;width:min(100%,420px);min-height:0;aspect-ratio:1/1;margin:0;padding:1.4rem;align-items:center;justify-content:center;text-align:center}
+ .card span{width:100%}
+ .node{position:relative!important;left:auto!important;top:auto!important;display:block;margin:10px 0;max-width:none;border-radius:16px}
+ .nodes{min-height:0}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.chap p{opacity:1;transform:none}.door>*{opacity:1!important}.door>*:not(.rcpt){transform:none!important}}
+.modal{position:fixed;inset:0;z-index:80;background:rgba(10,8,6,.92);display:none;align-items:center;justify-content:center;padding:4vw}
+.modal.open{display:flex}
+.modal .box{width:min(960px,100%);height:min(70vh,640px);position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:3rem;color:#f5eee2;background:var(--g)}
+.modal .box p{max-width:30rem;font-family:'Noto Serif JP',serif;font-weight:300;line-height:2;margin-top:1rem}
+.modal h4,.modal .box p{white-space:pre-line}
+.modal h4{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;font-size:clamp(2rem,4vw,3.4rem)}
+.modal button{position:absolute;top:16px;right:16px;border:1px solid #fff5;padding:.5rem 1rem;font-size:12px;letter-spacing:.2em}
+/* edit mode */
+#editor{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:95;display:none;align-items:center;gap:8px;background:#1A1A1A;color:#f5eee2;padding:.6rem .8rem;box-shadow:0 18px 44px rgba(0,0,0,.4);flex-wrap:wrap;max-width:94vw}
+body.editing #editor{display:flex}
+#editor .st{font-size:12px;letter-spacing:.08em;color:#bda98f;padding:0 .5rem;max-width:22rem;line-height:1.5}
+#editor button{border:1px solid #6d5a48;padding:.5rem .9rem;font-size:12px;letter-spacing:.15em;transition:.25s}
+#editor button:hover{border-color:#bda98f}
+#editor button.primary{background:var(--bronze);border-color:var(--bronze);color:#fff}
+body.editing .prose p{opacity:1!important;transform:none!important}
+body.editing [data-edit]{outline:1px dashed rgba(139,94,60,.45);outline-offset:4px;cursor:text;transition:background .2s}
+body.editing [data-edit]:hover,body.editing [data-edit]:focus{background:rgba(139,94,60,.07);outline-color:var(--bronze)}
+body.editing .card{pointer-events:none}
+body.editing .chap h2{outline:1px dashed rgba(139,94,60,.45);outline-offset:6px}
+body.editing .chap p{opacity:1!important;transform:none!important}
+.chdel{display:none;font-size:11px;letter-spacing:.14em;color:var(--bronze);border:1px solid #ddd5c6;padding:.35rem .7rem;margin-bottom:1.2rem;background:rgba(253,252,248,.9);cursor:pointer}
+body.editing .chdel{display:inline-block}
+body.editing .chdel:hover{border-color:var(--bronze);background:#fff}
+body.editing .portal h1{outline:none!important;background:none!important;cursor:text}
+/* 章扉（モバイルのみ表示） */
+.door{display:none}
+@media(max-width:820px){
+ .door{display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;color:#f5eee2;min-height:100vh;min-height:100svh;margin:0 -28px 7vh;padding:28px 28px 12vh}
+ .door::before{content:"";position:absolute;inset:0;background:var(--g)}
+ .door::after{content:"";position:absolute;inset:0;opacity:.22;mix-blend-mode:overlay;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+ .door>*{position:relative;z-index:1;opacity:0;transition:opacity 1.2s ease}
+ .door>*:not(.rcpt){transform:translateY(16px);transition:opacity 1.2s ease,transform 1.2s ease}
+ .door.in>*{opacity:1}
+ .door.in>*:not(.rcpt){transform:none}
+ .door .big{position:absolute;top:6vh;right:6vw;font-family:'Playfair Display',serif;font-size:min(46vw,220px);line-height:1;opacity:0;margin:0}
+ .door.in .big{opacity:.16}
+ .door .tone{font-size:11px;letter-spacing:.35em;text-transform:uppercase;margin-bottom:.8rem}
+ .door.in .tone{opacity:.65}
+ .door .kw{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(1.6rem,7vw,2.2rem);line-height:1.2}
+ .door .cap{margin-top:.8rem;max-width:20rem;font-family:'Noto Serif JP',serif;font-weight:300;font-size:.85rem;line-height:1.95}
+ .door.in .cap{opacity:.88}
+ .door .rcpt{top:42%;width:min(280px,74%)}
+ body.editing .door>*{opacity:1!important}
+ body.editing .door>*:not(.rcpt){transform:none!important}
+ body.editing .door .big{opacity:.3!important}
+ body.editing .door [data-d]{outline:1px dashed rgba(245,238,226,.55);outline-offset:4px}
+ body.editing .door [data-d]:focus{background:rgba(255,255,255,.12);outline-color:#fff}
+}
+/* stage edit */
+.scene{pointer-events:none}.scene.on{pointer-events:auto}
+body.editing .scene [data-s]{outline:1px dashed rgba(245,238,226,.55);outline-offset:4px;cursor:text}
+body.editing .scene [data-s]:focus{background:rgba(255,255,255,.12);outline-color:#fff}
+/* login */
+.login{position:fixed;inset:0;z-index:100;background:rgba(10,8,6,.94);display:none;align-items:center;justify-content:center;padding:4vw}
+.login.open{display:flex}
+.login .lb{width:min(380px,100%);background:var(--paper);padding:2.2rem 2rem;position:relative}
+.login h4{font-family:'Playfair Display',serif;font-weight:400;font-size:1.4rem;margin-bottom:1.4rem;color:var(--umber)}
+.login input{width:100%;border:1px solid #ddd5c6;background:#fff;padding:.8rem 1rem;margin-bottom:.8rem;font:inherit;font-size:14px;color:var(--ink)}
+.login input:focus{outline:2px solid var(--bronze);outline-offset:1px}
+.login .go{width:100%;background:var(--ink);color:var(--paper);padding:.85rem;letter-spacing:.25em;font-size:12px}
+.login .go:disabled{opacity:.5}
+.login .msg{min-height:1.4em;margin-top:.9rem;font-size:12px;color:#a33;line-height:1.6}
+.login .x{position:absolute;top:10px;right:12px;font-size:11px;letter-spacing:.2em;color:var(--slate)}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<header class="portal" id="top">
+  <div class="eyebrow" data-edit="eyebrow">Synaptic Archive — A Short Story</div>
+  <div class="ghost" aria-hidden="true">G.P.</div>
+  <h1 data-edit="title"><em>ジェラール・フィリップは洗われた</em>Gérard Philipe<br>was Washed.</h1>
+  <p class="abs" data-edit="abstract">名前も顔も知らない誰かが、ある土曜日の昼下がりに買い、本に挟んだ一枚のレシート。<br>古い文庫本、渋谷、五万五千円のジャケット、そして洗われた言葉。<br>遠い他人の生活に思いを馳せる、ひとつの物語のアーカイブ。</p>
+  <button class="enter" onclick="document.getElementById('read').scrollIntoView()">Enter the Archive</button>
+</header>
+
+<div class="ctl">
+  <button onclick="sz(-1)" aria-label="文字を小さく">A−</button>
+  <button onclick="sz(1)" aria-label="文字を大きく">A＋</button>
+</div>
+
+<main>
+<div class="reader" id="read">
+<div class="text">
+<article class="prose" id="prose">
+<section class="chap"><div class="no">I</div><h2>世界のどこかに</h2>
+<p>世界のどこかに土曜日の昼下がりに五万円のジャケットを買う人がいて、その人が一冊の古い文庫本を読んでいた、という事実を僕はときどき理由もなく思い出すことがある。別に実際に見たわけではない。ただ、そういう人が確かにどこかに存在していたのだろう、という感覚だけが、なぜか長い間頭の片隅には残っていた。高価な服を買うことと、古い文庫本を読むこと。その二つが同じ一日の中に並んでいることが、僕には奇妙なほど現実的で、同時に少しだけ不思議な感じがした。その人の顔は浮かばない。年齢も性別もわからない。けれどその人が買い物袋を片手に、二月の空の下、渋谷の街を歩いている光景だけは、なぜか鮮明に想像できる。乾いた冬の空気と、昼過ぎの白っぽい光。渋谷パルコの前の広場に斜めに落ちる、少し硬質な日差し。実際にはそこへ行ったことなど一度もないのに、その場所だけは昔から知っている景色みたいに頭に浮かぶ。車通りの多い交差点。信号待ちをする人たち。コートの襟を立てて歩く若い男女。ビルのガラスに反射する淡い冬の光。そういう細部までもがなぜか僕には容易に想像ができる。多分僕は、その景色そのものに惹かれているというより、そこに偶然存在していた無数の他人の生活に惹かれているのだと思う。自分とはまったく関係のない誰かが、何かを買い、何かを読み、誰かと待ち合わせをし、あるいは一人で歩いて帰る。そのこと自体に静かな生活感がある。自分の知らない場所で、自分とは無関係な時間が、今も静かに流れ続けている。そんな当たり前の事実に、僕はほっと胸を撫で下ろしていたのかもしれない。とにかく僕は今も世界のどこかにいる、誰かに思いを馳せている。名前も知らない、顔も知らない。声も、年齢も、身分すらわからない誰かに、思い馳せている。</p>
+</section>
+
+<section class="chap"><div class="no">II</div><h2>洗われた</h2>
+<p>大学の第二外国語のフランス語の授業だった。午後の教室には窓から差し込む光が机上に細長く伸びていた。教授は黒板に向かい、チョークを走らせながら動詞の活用について説明していた。前の席では誰かが教科書のページをめくり、少し離れたところから椅子の脚が床を擦る音が聞こえた。</p>
+<p>僕は教授の説明を聞きながら、ノートに書き取った例文の下へ、意味のわからない単語をいくつか書き足していた。</p>
+<p>教授が黒板に「lavé」と書いたのは、そのときだった。</p>
+<p class="d">「これは過去分詞です。洗われた、という意味になります。たとえば、洗いをかけた服のことを、フランス語ではこう言うこともあります」</p>
+<p>その言葉を耳にした瞬間、ノートを走っていたペン先が止まった。</p>
+<p class="line">COTON MILITAIRE LAVE。</p>
+<p>頭の中で、古い文庫本に挟まっていたレシートの文字が、そのまま浮かび上がった。日付も、時刻も、店の名前も、金額も、もう何度見返したかわからない。けれど、その三つの単語だけは、いつ見ても少し不思議な感じがした。僕はノートの余白に、教授が黒板に書いたものと同じように、COTON MILITAIRE LAVEと書き写した。書いてみると、レシートに印字されていたときよりも、ずっと意味のある言葉に見えた。</p>
+<p class="d">「何、それ」</p>
+<p>隣の席から、小さな声が聞こえた。顔を向けると、髪を一つに束ねた女の子が僕のノートを覗き込んでいた。彼女は片手で教科書のページを押さえ、もう片方の手にはシャープペンシルを持っていた。覗き込んだ拍子に、耳の横に残っていた短い髪が頬にかかる。彼女はそれを指先で軽く払ってから、ノートの文字をもう一度確かめた。</p>
+<p class="d">「あ、いや。服の名前で」</p>
+<p class="d">「ミリタリー。軍隊の？」</p>
+<p class="d">「そう。ジャケットの」</p>
+<p class="d">「へえ。かっこいいね」</p>
+<p>彼女は文字を読み終えると、特にそれ以上尋ねることもなく、教科書へ視線を戻した。何かを気に入ったときに、深く考えずそのまま口にするような言い方だった。僕はどうしてその言葉をノートに書いたのか説明しようかと思った。古本屋で買った本にレシートが挟まっていたこと。そのレシートに、今書いたのと同じ文字が印字されていたこと。けれど、初めて話した相手にするには、どれも少し長い話のような気がした。</p>
+<p class="d">「……うん」</p>
+<p>結局、返したのはそれだけだった。ちょうど教授が次の例文を読み始め、教室のあちこちでペンの音が戻ってきた。彼女も黒板に目を向け、自分のノートに何かを書き始めた。僕はしばらく彼女の横顔を見ていたが、やがて自分のノートに視線を落とした。そこには、授業の内容とはほとんど関係のない三つの単語が、ほかの文字より少し大きく書かれていた。それが、フユとの最初の会話だった。</p>
+</section>
+
+<section class="chap"><div class="no">III</div><h2>学食の窓際</h2>
+<p>フユは文学部で、フランス語は単位を取るために履修していた。けれど彼女の発音は驚くほど上手だった。教授が黒板に書いた文章を順番に読ませるとき、彼女の番になると、教室の空気がほんの少しクリアになった。フランス語特有の鼻に抜ける音も、単語と単語のあいだを滑らかにつなぐ発音も、初めからその言葉を知っていたようだった。教授は彼女が読み終わるたびに発音が素晴らしい、と褒めた。フユはそのたびに、ありがとうございます、と小さく頭を下げた。得意げになるわけでも、謙遜して否定するわけでもなく、慣れたように微笑みを浮かべた。僕は彼女の後に同じ文章を読まされることが何度かあったが、自分の口から出てくるフランス語は、どうしても教科書の文字を一つずつ拾い上げているように聞こえた。</p>
+<p>彼女と初めて会話をした授業が終わった後、僕たちは学食で一緒に食事をした。昼休みの学食はびっくりするほど混雑していて、トレーを持った学生たちが空席を探して行き来していた。窓際の席がひとつ空いていたので、そこに向かい合って座った。フユは日替わり定食を選び、僕はカレーライスを頼んだ。彼女は食べる前に、テーブルに置かれた紙ナプキンを一枚取って、膝の上に落ちた水滴を拭いた。それから、今日の課題どうだったと尋ねた。</p>
+<p>最初は授業の課題について話していた。動詞の活用がどうにも覚えられないとか、教授が出す小テストは妙に細かいとか、そんなことだった。彼女は僕が間違えた箇所を覚えていて、そこは前にもやったところだよ、と言って笑った。僕は少しばつが悪かったが、彼女の説明はわかりやすかった。</p>
+<p>食事が進むにつれて、話題は少しずつ授業から離れていった。彼女が最近読んだ本の話をし、僕が昔観た映画の話をした。アルバイト先の店長がいかに理不尽かという話になると、彼女は自分の勤めている書店にも似たような人がいると言って、レジで起きた出来事を話してくれた。話の途中で何度か笑い声を立てたが、周囲の学生たちの声に紛れてしまうくらい小さかった。彼女は話をするとき、相手の言葉を遮らなかった。僕がうまく説明できずに途中で言い直しても、急かすことなく待っていた。そうしているうちに、食べ終わった後も席を立つ理由がなくなってしまった。</p>
+<p>それから授業のない日にも会うようになった。</p>
+<p>大学の図書館で待ち合わせたり、駅前の喫茶店でコーヒーを飲んだり、彼女のアルバイトが終わる時間に合わせて書店の近くまで行ったりした。特別な約束をしたわけではなかった。どちらかが何かを読み終えたとき、面白かったから読んでみて、と連絡をする。その本について話したくなって、次に会う日を決める。そんなことが何度か続くうちに、会うこと自体が僕たちの予定のなかに自然に組み込まれていった。</p>
+<p>彼女は読書家だった。小説だけでなく、エッセイや評論も読んでいたし、気に入った本は何度も読み返していた。気に入った文庫本の端には時折鉛筆で線が引かれていて、ページの隅が少しずつ丸まっていた。彼女は本の話をするとき、あらすじを説明するよりも、ある一節のことや、登場人物が何気なく口にした言葉について話すことが多かった。どうしてそんなところを覚えているのだろうと思うような些細な文章を彼女は何週間も経ってから正確に思い出したりした。ある日、僕がとある作家の名前を挙げると、彼女はそれまで手にしていたカップをテーブルに置いた。</p>
+<p>目が少し大きくなり、さっきまでとは明らかに違う表情で僕を見た。</p>
+<p class="d">「え、その人読むの？」</p>
+<p>声に出してから、自分でも意外だったというように、彼女は少し笑った。</p>
+<p>僕が頷くと、どの作品が好きなのか、いつから読んでいるのか、矢継ぎ早に尋ねてきた。僕は彼女の質問に答えながら、その作家について一体自分がどれほど知っているのか急に心配になった。彼女のほうがずっと詳しいのではないかと思ったし、実際、その予感はすぐに当たった。それでも彼女は、僕の話を途中で訂正したり、知識を披露したりはしなかった。ただ自分の好きな作品について話し始めた。普段より少し早口になって、言葉を探すために何度か視線を宙に泳がせた。僕はそのとき初めて、彼女が本の話をするのを好きなのではなく、本の話を誰かとすることが好きなのだと思った。</p>
+</section>
+
+<section class="chap"><div class="no">IV</div><h2>ジェラール・フィリップ</h2>
+<p class="d">「ねえ、あなたなんだかジェラール・フィリップみたいね」</p>
+<p>小説の話がひと段落したあと、彼女は思い出したようにそう言った。</p>
+<p class="d">「ジェラール・フィリップ？」</p>
+<p class="d">「うん。知らない？　フランスの俳優」</p>
+<p class="d">「知らないな」</p>
+<p class="d">「『花咲ける騎士道』とか『肉体の悪魔』とか。昔の映画だけど」</p>
+<p class="d">「初めて聞いたよ」</p>
+<p>僕が正直に答えると、彼女は肩を揺らして笑った。</p>
+<p class="d">「そう。でも、とてもよく似てる気がする。目元とか」</p>
+<p class="d">「そうかな」</p>
+<p class="d">「まあ、今度調べてみなよ」</p>
+<p>彼女はそう言って、ストローで飲み物をかき混ぜた。氷がグラスの内側に当たって、小さな音がした。僕はその音を聞きながら、彼女の話し方が好きだと思った。何かを無理に伝えようとせず、ただそこにある事実をそっと手渡すような声のトーン。窓から差し込む午後の光が、彼女の束ねた髪の輪郭を淡く縁取っていた。僕はストローから指を離し、飲みかけのアイスコーヒーを見つめながら、この時間がずっと続けばいいのにとぼんやりと考えた。</p>
+<p>その夜、僕は部屋に帰ると、ジェラール・フィリップと検索した。画面には、白黒の写真がいくつも表示された。巻き毛の好青年がこちらを見て少し困ったように笑っている。整った顔立ちというより、どこか頼りなさげで、素直に笑いきれていないような、おぼつかない表情だった。写真の中の彼はこちらの知らない時間を生きていて、こちらの知らない場所で誰かに愛され、誰かを失い、誰にも知られないような些細なことで機嫌を損ねたりもしたのだろう。そんな当たり前のことを考えながら、僕は彼の生年月日と没年を確かめた。三十六歳だった。思っていたよりずっと若かった。出演作の一覧を開くと、知らない映画の題名が縦に並んでいた。古いポスターには、彼の顔が何度も印刷されていた。どの写真でも巻き毛の具合や目元の印象は少しずつ違っていたが、そこに在りし日の自分の面影を探すように、僕はそれらの写真を一枚ずつ眺めた。けれど見れば見るほど、自分が彼に似ているのかどうかはわからなくなった。そもそも僕と彼とでは生きた時代も、育った場所も、身につけていた服も違う。似ているという言葉が、顔の輪郭や目鼻立ちのことなのか、それとも写真から受ける漠然とした印象のことなのか、僕には判断がつかなかった。気がつくと、部屋の照明だけがついたまま、窓の外はすっかり暗くなっていた。机の上には朝から飲みかけの水が入ったグラスと、大学の講義で使ったノートが開きっぱなしになっていた。画面の隅には、彼が出演した映画の配信情報がいくつか表示されていた。一本くらい観てみようかと思った。けれど、どれも再生ボタンを押す寸前で止まった。彼の声を聞いてしまえば、僕はフユと関わる中で、常に彼の存在を意識しなければならないような気がした。そしてそれはとても気疲れしてしまうように思えた。結局、僕は一本も観ないまま画面を閉じた。似ていると言われたことが褒め言葉なのかどうかも、よくわからなかった。ただ、彼が三十六歳で死んだということと、フユがその名前を知っていたということだけが、脳裏を離れなかった。僕はもう一度、暗くなった画面に映る自分の顔を見た。</p>
+<p>翌日の授業の前に、「調べたよ」と伝えると、彼女はペンを回しながら訊いた。</p>
+<p class="d">「どうだった」</p>
+<p class="d">「よくわからなかった」</p>
+<p class="d">「わからなかった？」</p>
+<p>フユが首を傾げた。</p>
+<p class="d">「自分とどこが似ているのか、さっぱりわからなかった」</p>
+<p>僕が正直に答えると、彼女はにこりと笑った。</p>
+<p class="d">「わからなくていいのよ」</p>
+<p class="d">「どうして？」</p>
+<p class="d">「そのうちわかるから」</p>
+<p class="d">「そのうち？」</p>
+<p class="d">「うん、そのうち」</p>
+<p>短い沈黙が流れた。</p>
+<p class="d">「ねえ、あなたはどんなふうに生きてきたの？」</p>
+<p class="d">「どんなふうに？」</p>
+<p>彼女は静かに頷いた。</p>
+<p class="d">「どこから来て、どこへ向かっていたのか。どんな部屋に住み、朝には何を飲むのか。休日には何をして過ごすのか」</p>
+<p>その問いを、僕は何度か反芻した。</p>
+<p class="d">「普通だよ」</p>
+<p class="d">「ふつう？」</p>
+<p>僕は頷いた。</p>
+<p class="d">「裕福でもないし、貧乏でもない家庭に生まれて、流れに身を任せるように大学受験をして、西荻窪のアパートでコーヒーを飲みながら、本を読んでる」</p>
+<p>僕がありのままに話すと、彼女は何度かしきりに瞬きをしてから、今にも消え入りそうな声で、「そっか」とだけ呟いた。</p>
+<p class="d">「大した生活はしてないけど、それなりには充実してるよ」</p>
+<p class="d">「そう。なら、よかったわ」</p>
+<p>彼女はそう言って、満足げにノートにペンを走らせた。僕はその姿を見つめながら、彼女という存在に強く惹かれ始めている自分に気がついていた。</p>
+</section>
+
+<section class="chap"><div class="no">V</div><h2>二人分の食器</h2>
+<p>一人暮らしの部屋にフユはよく来た。六畳ほどの部屋には、ベッドと本棚と、小さな折りたたみの机がひとつあるだけだった。二人で机に向かうと、ノートを広げる場所にも困った。彼女が教科書を開けば、僕は自分のノートを膝の上に置いた。消しゴムを貸してほしいと言われるたびに、机の向こうまで手を伸ばさなければならなかった。ときどき肘がぶつかり、そのたびにどちらからともなく少し身体を引いた。課題が一段落すると、彼女は椅子の背にもたれて、しばらく天井を眺めていた。僕が続きをやろうと言うと、もう少し休ませて、と答えた。夕食も二人で作った。彼女は味噌汁を作るのが上手だった。冷蔵庫に残っている野菜を見て、何を入れるか決めるのが早かったし、味噌を溶くときも、いつも目分量だった。僕は米を炊くことだけは得意だった。水の量を間違えたことがほとんどなく、炊き上がった米はいつもふっくらとしていて、彼女に褒められた。大したことではないのに彼女は蓋を開けるたびに、今日も上手に炊けてるね、と言った。僕はその言葉を聞くたびに米を炊くくらい誰にでもできる、と返した。彼女は、そういうことじゃないんだけど、と言って笑った。食事のあとは、どちらかが洗い物をした。僕が洗っているあいだ、彼女は流しの横で濡れた食器を拭いていたこともあるし、反対に彼女が洗い、僕が拭くこともあった。そうした分担を決めた覚えはなかった。気がつけば片方が何かをしていると、もう片方も自然に手を動かしていた。彼女が来る日は、帰りに牛乳を買ってきてもらうことがあった。僕は彼女の好きな銘柄のヨーグルトを冷蔵庫に入れておくようになった。特別なことをしているつもりはなかったが、買い物のときに自分以外の誰かについて考えることは、それまでの生活にはなかったことだった。</p>
+<p>いつしか彼女は僕の使っているマグカップで水を飲んだ。最初にそれを見たとき、僕は何となく自分のものだと説明しようとしたが、彼女はもう口をつけていたので、結局何も言わなかった。それ以来、そのカップは二人で使うものになった。彼女は読みかけの本を机の隅に置いて帰ることがあった。次に来たときには、その続きを読み始める。ときどき、前にどこまで読んだのか忘れてしまったと言って、僕に尋ねることもあった。僕が覚えていないと、彼女は少し呆れた顔をして、栞を挟んでおけばよかった、と自分に言い聞かせるように呟いた。洗面台には、いつの間にか彼女のヘアゴムがひとつ残っていた。黒くて、飾りも何もついていない、ごく普通のものだった。僕はそれを見つけたとき、彼女に忘れているよと連絡しようかと思ったが、次に来たときに渡せばいいと思い直した。ところが、次に来たときも、その次に来たときも、渡すのを忘れてしまった。彼女も特に気にしていないようだった。ヘアゴムはしばらく洗面台の隅に置かれたままになり、いつしかそこにあることが当たり前になった。</p>
+<p>部屋に二人分の食器が増えていくにつれて、生活というものの輪郭が少しずつはっきりしていくような感覚を覚えた。以前は冷蔵庫に何が入っているかも、洗濯をいつするかも、すべて自分の都合だけで決まっていた。けれど彼女が来るようになってからは、夕食の材料を少し多めに買い、使った食器を二人分まとめて洗い、彼女が読み終えるまで机の上の本を動かさないようになった。彼女が帰ったあとの部屋には、使われたマグカップや、畳まれたブランケットや、読みかけの本が残っていた。そういうものを片づけずに眺めている時間も僕は嫌いではなかった。誰かと暮らすということがどういうものなのか、僕にはまだわからなかったけれど、少なくとも誰かが帰ったあとにも、その人の気配が部屋に残るということだけは身に沁みて実感した。</p>
+</section>
+
+<section class="chap"><div class="no">VI</div><h2>残火</h2>
+<p>それでもふとした瞬間に、僕は『あの人』のことを思い出した。車の窓から渋谷方面の看板を見かけたときだった。見慣れた地名が視界の端を通り過ぎただけなのに、そこに結びついていた何かが、思いがけず意識の底から浮かび上がってきた。街の服屋の前でカーキ色の上着が目に入ったときもそうだった。店先のマネキンが着ていただけで、特段珍しい色でもなかった。誰かが土曜日の予定を話しているのを聞いたとき、古本屋で本を買ったあとにレシートを受け取ったときにも同じことが起きた。レシートには店名と日付と金額が印字されていて、商品名には『文庫本』とだけ記されていた。それなのに、紙を財布にしまうとき、僕は一瞬だけ手を止めてしまった。そういう瞬間は、決まって唐突に訪れた。何かを探しているわけではなかったし、忘れないように努めているわけでもなかった。むしろ、日々の暮らしに追われているときほど、何の前触れもなく思い出した。夕食の味噌汁をよそっているときや、フユが机に向かってフランス語の課題を解いているときでさえ、ふいにその人のことが頭をよぎることがあった。</p>
+<p>思い出すといっても、何かが鈍く痛むわけではなかった。胸が締めつけられることもなければ、その場に立ち尽くしてしまうこともなかった。ただ、胸の奥のどこかに、消えないまま燻り続ける残火のようなものがあった。普段はそこにあることさえ忘れている。けれど、何かの拍子に空気が通ると、まだ熱を持っていることがわかる。もう一度燃え上がるほどの力はないのに、完全に冷めてしまうこともなかった。フユと一緒にいるときでも、その火は消えなかった。彼女が隣で本を読んでいるとき、僕の作ったご飯を食べているとき、何か面白いことを思い出して話しているとき、僕は確かに彼女との時間を過ごしていた。彼女の声や、食器を置く音や、洗面台に残されたヘアゴムは、どれもその時間に属していた。あの人のことを思い出す時間とは何かが違っていた。しかしそれは決してどちらかがどちらかの代わりになるという話ではなかった。フユと過ごす時間が増えたからといって、あの人の記憶が薄くなるわけではないし、あの人を思い出すからといって、フユといる時間が色褪せるわけでもなかった。僕のなかでは、それぞれが別の場所にあり、それぞれが互いに干渉することなく、互いの領域に踏み込まず、静謐に存在していた。僕はずっと昔人の心というものはもっと単純にできているのだと思っていた。新しいものが入ってくれば、古いものは少しずつ場所を譲っていくのだと思っていた。けれど、実際にはそうではなかった。新しい食器を買い足しても、食器棚の奥にしまった古い皿がなくならないように、僕のなかには、使わなくなったあともそのまま残っている場所があった。</p>
+</section>
+
+<section class="chap"><div class="no">VII</div><h2>鍋の夜</h2>
+<p>しかし、いつまでも『その人』のことを隠していることはできない。その話をフユにしたのは、十一月の夜だった。その日は僕の部屋で鍋をしていた。夕方から冷え込みが厳しくなり、大学から帰る途中、駅前のスーパーで白菜と長ねぎ、それから豚肉を買った。フユは豆腐を選び、僕は鍋つゆの棚の前でしばらく迷った。結局、いつも買っているものにした。部屋に着くころには、買い物袋を持つ指先が冷たくなっていた。</p>
+<p>鍋は折りたたみの机の上に置いた。二人で向かい合って座るには少し狭く、彼女が箸を伸ばすと、僕の茶碗に当たりそうになった。フユは白菜をよく食べた。煮えて柔らかくなった葉の部分を箸でつまみ、少し冷ましてから口に運んでいた。僕が肉を取りすぎると、そんなに食べるの、と言った。僕は鍋なんだからいいだろうと答えた。彼女は笑って、そういう問題じゃない、と言った。食べ終わるころには、窓がすっかり曇っていた。外の街灯は輪郭を失い、黄色い光だけがガラスの向こうにぼんやり浮かんでいた。鍋の火を止めても、部屋にはしばらく湯気と出汁の匂いが残っていた。フユは食器を流しに運び、僕は鍋を片づけた。彼女が洗い物をしているあいだ、僕は濡れた机を布巾で拭いた。食後、フユは本棚の前に立っていた。僕が洗面所から戻ると、背表紙を眺めながら、何か面白そうな本はないかと尋ねた。彼女は本棚の上段から何冊か取り出し、表紙を見比べていた。やがて一冊の文庫本を手に取った。フユはその本を開き、最初の数ページをめくったあと、途中のページで手を止めた。何かを確かめるように、少し戻ってから、また先へ進んだ。表紙を裏返し、出版社の名前を眺めているようだった。そのとき、挟まっていたレシートが滑り落ちた。</p>
+<p>乾いた紙の音が、机の脚のあたりで小さく鳴った。</p>
+<p class="d">「あ、ごめん」</p>
+<p class="d">「あっ、大丈夫。そのままでいい」</p>
+<p>フユは本を持ったまま、床に落ちたレシートを見た。僕は彼女よりも先に、それを拾った。薄い紙片は何度も折り畳まれたせいで端が柔らかくなっていた。印字もところどころ薄れていたが、日付と店名はまだ読めた。僕はそれを手のひらに載せた。何度も見てきた紙片だった。日付も、店名も、金額もすべて覚えていた。財布から取り出して眺めたこともあったし、本に挟んだまま何か月も忘れていたこともあった。捨てようと思ったことも一度や二度ではない。けれど、そのたびにまだ捨てなくてもいいと心に暗示をしていた。理由を考え始めると、かえって捨てられなくなるような気がした。</p>
+<p class="d">「それ、何のレシート？」</p>
+<p>フユが尋ねた。</p>
+<p class="d">「古本屋で買った本に挟まってたレシート」</p>
+<p class="d">「買ったときのレシート？」</p>
+<p class="d">「ううん。本を買ったときに、たまたま挟まっていた知らない人の知らない買い物のレシート」</p>
+<p>自分でも要領を得ない答えだと思った。フユは手にしていた文庫本を閉じた。僕の顔と手のひらに載ったレシートを交互に見ていた。僕は紙を広げ、印字された数字を指でなぞった。もう何度も確かめたはずなのに、そこに書かれているものを読み直すのはいつも少しだけ落ち着かなかった。レシートには何の説明もなかった。誰が本を買ったのかも、どうしてそれが僕の手元にあるのかも、そこには記されていない。ただ、ある日、ある店で、ある金額の買い物があったという事実だけが残っていた。</p>
+<p class="d">「実は──」</p>
+<p>僕はそこで一度言葉を切った。彼女の手元にはさっきまで読んでいた文庫本が閉じられたまま置かれていた。</p>
+<p class="d">「このレシートを持っていた人のことをずっと考えているんだ」</p>
+<p>そう言ってから、僕はどこから話せばいいのか考えた。いつのことだったのか。どういう関係だったのか。そもそも、僕はその人のことをどれくらい知っていたのだろう。思い出せる出来事はいくつもあったが、それを順番に並べたところで、彼女に伝わるとは思えなかった。</p>
+<p class="d">「別に、付き合っていたとか、そういう話じゃないんだけど」</p>
+<p class="d">「うん」</p>
+<p class="d">「ただ、今でもときどき思い出すんだ。何かを見たり、聞いたりしたときに。自分でも、どうしてそんなことで思い出すのかわからないようなときに」</p>
+<p>フユは僕の手元に目を落とした。僕はレシートをもう一度折り畳もうとしたが、折り目が以前と違う場所にできそうで、途中でやめた。</p>
+<p class="d">「この人が、その人なの？」</p>
+<p class="d">「うん。このレシートは、きっとその人が買ったものなんだと思う」</p>
+<p>言ってしまうと、思っていたよりも簡単なことのように聞こえた。けれど僕にとっては、ずっとそうではなかった。誰かが買った一冊の本と、その人が生きていた時間と、僕が今も覚えているいくつかの場面。それらは僕のなかで、長いあいだ切り離せないままになっていた。</p>
+<p>フユは少しだけ考えるように黙っていた。やがて、机の上に置かれた本を指先で押さえた。</p>
+<p class="d">「その人のことが、好きなの？」</p>
+<p>僕はすぐには答えられなかった。好きだった、と言えば何かを決めつけてしまうような気がしたし、そうではなかったと言うのも違う気がした。</p>
+<p class="d">「わからない」</p>
+<p>僕はそう答えた。フユはそれ以上尋ねなかった。窓の外では街灯の光が曇ったガラスに滲んでいた。机の上には二人分の湯飲みと、読みかけの文庫本が置かれていた。僕の手のひらには、折り目のついたレシートが残っていた。僕はしばらく迷ったあと、彼女にその話をし始めた。</p>
+</section>
+
+<section class="chap"><div class="no">VIII</div><h2>雑居ビルの古本屋</h2>
+<p>その本を手に入れたのは、高校三年生の冬だった。場所は駅前から少し外れた雑居ビルの二階にある古本屋で、駅前の新しい書店とは違い、そこにはいつも少し古く、すこしカビた時間が流れていた。入口は狭く、階段も急だった。階段の壁には色褪せた映画のポスターが何枚か貼られていて、途中の踊り場には縛った雑誌の束が積まれていた。上まで行くと小さなガラス扉があり、押して入ると乾いた紙の匂いがした。店の中には文庫本の棚が所狭しに隙間なく並んでいた。棚は天井近くまで伸びていて、上段の本を取るための脚立が端に立てかけられていた。暖房は入っていたが、それほど熱心には効いておらず、コートを脱ぐほどではなかった。カウンターの奥では店主らしき老人が椅子に座り、半分眠っているような顔でラジオを聞いていた。AMラジオ特有の少しざらついた音だけが静かに流れていた。僕は棚の間をゆっくり歩きながら、背表紙を順番に眺めていた。古本屋では、特に探している本がなくても、棚を見ているだけで時間が過ぎることがある。タイトルを眺め、少し引き抜き、また戻す。その繰り返しだった。僕は学校帰りで、制服のままだった。マフラーには外の冷たい空気がほんのりと残っていた。外の冷気で硬くなっていた喉が、少しずつ温まってきた。</p>
+<p>その本を見つけたのは、偶然だった。著者の名前は昔から知っていた。父親の本棚に何冊か並んでいて、中学生の頃は難しそうだと思っていたが、高校に入ってから少しずつ読むようになっていた。不思議と手が止まらない文章を書く人だった。乾いているのに、妙な湿度がある、とでもいうか、言葉のひとつひとつが素っ気ないのに、読んでいると胸の奥のほうが静かに揺さぶられた。長編も何作か書いていたが、短編集の方がはるかにその作家性とでもいうべきものが遺憾なく発揮されていた。その本も例によって薄い短編集だった。カバーは少し日に焼けていて、角に細かな擦れがあった。何人かの手を渡ってきたことがわかる本だった。新品の本にある硬さがもうなく、ページを開いたとき、癖が少しついていた。値段は、覚えていない。ただ、高校生の自分でも迷わず買えたくらいには安かった。古本屋の文庫本はたいていそうだった。会計を済ませると、店主は無言で本を紙袋に入れた。僕はそれを鞄に入れて店を出た。外は夕方前で、駅前には制服姿の高校生や買い物帰りの人たちがいた。コンビニの前では自転車が何台も並び、遠くで踏切の警報音が聞こえていた。外気は依然として冷ややかだったが、とても穏やかで、どことなく祝福的な夕暮れだった。</p>
+<p>家に帰ると、僕は制服のまま自分の部屋へ入った。暖房をつけ、ベッドに腰を下ろして、その本を開いた。窓の外では夕方の電車が一定の間隔で通り過ぎていった。遠くで犬の鳴く声がした。部屋には電気ストーブの少し焦げたような匂いが漂っていて、机の上には読みかけの問題集とシャープペンが置かれたままだった。最初の短編は、動物園のカンガルーについて書かれた話だった。少し奇妙な話で、作者の意図までは読み取れなかったが、不思議と読みやすかった。二つ目には、春の朝に「完璧な誰か」とすれ違う話が入っていた。主人公は朝の街を歩いていて、そのとき一人の女性とすれ違う。ただ、それだけの話だった。相手の名前もわからないし、長い会話があるわけでもない。けれど主人公はその一瞬で、この人は自分にとって特別な存在なのだと感じる。理屈というより直感に近かった。この人とは、本来どこかで出会うはずだったのではないか。そんな確信だけが、不自然なくらい静かに描かれていた。しかし主人公は声をかけない。ただ、そのまま歩き続ける。少しして振り返ると、相手はもう人混みの中へ消えている。物語はそこで終わる。事件らしい事件は何も起きない。再会もない。ただ一度すれ違っただけだ。それなのに読み終えたあと、妙に長く余韻が残った。悲しいのか、寂しいのか、自分でもうまく整理できない。ただ何か取り返しのつかないものを、少しだけ失ったような感覚だけが静かに残っていた。僕はその短編を最後まで読み終えたあと、少し間を置いてから、もう一度最初のページに戻った。二回目のほうが文章はゆっくり頭に入ってきた。窓の外はさらに暗くなっていて、部屋の中ではストーブのカタカタという小さな音だけが聞こえていた。</p>
+</section>
+
+<section class="chap"><div class="no">IX</div><h2>レシート</h2>
+<p>二つ目の物語を読み終えたところで、一階から夕飯の支度ができたことを知らせる声が聞こえた。僕はそこで本を閉じ、机の上に置いた。その瞬間、本の間から何かが滑り落ちた。薄い紙切れだった。僕は反射的にそれを拾い上げた。よく見ると、それはレシートだった。細長く折れ曲がっていて、角には少し皺が寄っていた。前の持ち主が栞代わりに挟んでいたのだろう。古本にはたまにそういうものが残っている。映画の半券だったり、コンビニのレシートだったり、メモ帳の切れ端だったり。僕は最初、深く考えずにそれを捨てようとした。ゴミ箱へ放ろうとして、でも途中で手が止まった。そのレシートの内容が気になったのだ。この本を読んでいた人が、どんな人だったのか少し知りたくなった。もちろん、レシート一枚でその人のすべてがわかるわけではない。それでも、まったく何も知らない誰かの生活の断片が、偶然自分の部屋に落ちてきたような感覚があった。</p>
+<p>だから僕はレシートを眺めた。</p>
+<p class="rc">店名　A.P.C<br>住所　東京都渋谷区宇田川町15ー1　パルコ2F<br>日付　2021年02月13日（土）12:59<br>商品名　COTON MILITAIRE LAVE<br>単価　¥55,000<br>決済方法　クレジット</p>
+<p>僕はしばらく、その数字を見ていた。</p>
+<p>それは高校一年生だった自分にとって、現実感のない買い物だった。まず渋谷パルコという住所が僕にとっては新鮮な響きを持っていた。都会的で、どこか前衛的なその響きは、郊外に住む自分にとっては奇妙で、硬質な響きを持っていた。それに五万五千円のジャケットというのもまた現実感のない値段だった。僕の財布の中には常に千円札が二枚くらいしか入っていなかったし、小遣いも月に五千円程度だった。服に五万円を使う、という感覚自体がまだよくわからなかった。しかしそれ以上に不思議だったのは、そんな高価な服を買う人が、本の栞にレシートを使っていたことだった。僕は勝手に想像した。その人はきっと、スマートで洒落た人なのだろう。渋谷パルコへ行き、店員と気さくに会話をして、迷いなく服を選ぶような人。長財布からクレジットカードを取り出す動作は手慣れていて、買い物そのものが生活の一部として馴染んでいるようなクールで知的な人。もちろん、レシート一枚からそんな妄想をするのは少しばかり飛躍していたが、少なくとも休日の昼間に五万円のジャケットを買うには単にお金があるだけでは足りないような気がした。自分の暮らしに対するある程度の余裕というか、自分はこういうものを着たいのだという確信のようなものが必要な気がした。</p>
+<p>でもその人はレシートを栞にしていた。そこが僕の心をくすぐらせた。</p>
+<p>僕は当時、そういう人たちはもっときちんとした栞を使うものだと思っていた。革製のブックマーカーとか、海外の美術館で買った有名絵画を模したカードとか、そういうものを自然に本へ挟む人たちなのだと思っていた。けれど実際にはレシートだった。近くにある紙をそのまま栞代わりにすることは僕自身もよくあった。何気なく観た映画の半券だったり、カフェでもらった短いレシートだったり、学校で配られたプリントの切れ端だったり……。その場にあるもので済ませてしまう性分が僕にはあった。そして五万円のジャケットを買うような人にも、ありふれた高校生の僕と同じような性分があったのだ。まるで僕とは正反対にも見えるようなスマートで、クールな人がだ。僕はしばらくの間、そのレシートを机の上で眺めていた。捨てようと思えば、すぐに捨てることはできた。でも結局、僕はそのレシートを捨てなかった。そしてなんとなく、そのまま本に戻した。</p>
+<p>目を閉じ、想像する。</p>
+<p>二〇二一年の二月。土曜日の昼下がり。渋谷パルコのA.P.Cで、五万五千円のジャケットを買った誰かはクレジットカードで会計を済ませ、受け取ったレシートを二つ折りにし、本の間に挟んだ。そしてそのまま古本屋へ売ったのか、あるいは別の誰かを経由したのか。それはわからないが、今、その本とレシートはめぐり巡って、自分の部屋にある。その人が男性なのか、女性なのかはわからない。年齢も、居住地も、どのような朝を過ごしているのかさえも僕にはまったくわからない。ただ土曜日の昼に、渋谷で買い物をして、そのあとどこかでこの本を読んでいた、という事実だけがレシートからはわかる。ただ、それだけだった。それだけのはずなのに、いやそれだけのことだからなのか、僕はその人のことを考えないわけにはいかなかった。</p>
+<p>フユは話の腰を折ることなく聞いていた。湯呑みを両手で包み、ときどき小さく頷いていた。話し終えると、部屋は静かになった。台所の蛇口から、水が一滴落ちる音がした。冷蔵庫のモーターが低く唸っていた。僕は手のひらのレシートを見ていた。フユもまた、しばらくそれを眺めていた。</p>
+<p class="d">「その人を、探してるの？」</p>
+<p>彼女の声は、責める調子ではなかった。ただまっすぐに尖った問いだった。僕は答えようとして、口を開いた。けれど言葉が出てこなかった。探している、と言えば嘘になる気がした。探していない、と言えばそれもまた嘘になってしまうような気がした。僕はあの人に会いたいのだろうか。会いたいわけではないような気がする。ただ、どこかにいるのだと思っていたいだけなのかもしれない。自分の知らない場所で普通に暮らし、買い物をし、誰かと話し、時には本を読む。そういう日々を過ごしているのだと思っていたかった。でも、それをどう説明すればいいのか、わからなかった。</p>
+<p class="d">「わからない」</p>
+<p>ようやくそう答えると、フユは小さく頷いた。</p>
+<p class="d">「そっか」</p>
+<p>それだけ言って、彼女はレシートを本に戻し、本を元の位置に差した。その仕草は丁寧だったが、どこか少しだけ憂いを帯びていた。彼女はそのことを責めなかったし、それ以降、話題に出すこともなかった。僕もまた彼女といるあいだは、あのレシートのことを口にしなくなった。</p>
+</section>
+
+<section class="chap"><div class="no">X</div><h2>リヨン</h2>
+<p>二年生になった春、フユは交換留学の選考に通った。行き先はフランスのリヨンで、期間は一年だった。出発は九月。結果を知らせてきたとき、彼女は電話で、少し泣きながら笑っていた。電話の向こうから聞こえる声は、いつもより少し高く、言葉の合間に短い息が混じっていた。僕はよかったね、と言った。それが間違いのない本心だったことは、今でもはっきりと覚えている。電話の向こうでは、彼女の声に混じって、駅のアナウンスのような音が聞こえていた。彼女は外にいるらしく、ときどき周囲の音に気を取られて返事が遅れた。これから必要な手続きを調べなければならないと言い、僕はパスポートのことや住む場所のことを尋ねた。ビザの申請や大学への連絡、現地での住居探し。彼女が一つずつ話すたびに、僕たちの会話には知らない地名や制度の名前が増えていった。話しているうちに、僕たちの間に一年という時間が置かれたのだということが、少しずつ実感を伴ってきた。けれどそのときの僕には、それがどれほど長い時間なのか、まだよくわかっていなかった。</p>
+<p>彼女が日本を発つ前の数か月、僕たちは何度も会った。彼女は準備に追われ、僕は設計課題に追われた。休日に会っても、以前のように何時間も一緒に過ごすことは少なくなった。留学に必要な書類を確認したり、買い物に付き合ったり、出発前に会っておきたい友人の話を聞いたりした。文房具店では彼女が現地で使うノートを何冊か選び、僕はその横で、どれも同じように見えるノートの違いについて説明を求められた。薬局では、持っていく薬の種類を一緒に確認した。彼女は買ったものを一つずつ鞄にしまい、帰り道にはまだ買わなければならないものを思い出しては携帯電話にメモしていた。僕たちは以前よりも多くのことを話していたのに、二人の間にある時間は、どこか短くなっているようだった。彼女の部屋には、少しずつ荷物が増えていった。床に広げられたスーツケースの脇には衣類や本が積まれ、棚の上には書類をまとめた透明なファイルが置かれていた。僕の部屋に置いてあった彼女の本やヘアゴムも、いつの間にか持ち帰られていた。ある日、机の端に見慣れない空きができているのに気づいた。そこには以前、彼女が読みかけの本を置いていた。僕はその空いた場所をしばらく眺めていたが、特に何も言葉は思い浮かばなかった。</p>
+<p>九月になり、彼女は日本を発った。</p>
+<p>空港で別れるとき、僕たちはしばらく手を繋いでいた。彼女の手は少し冷たく、指先には出発前に指を切ったといって小さな絆創膏が貼られていた。何か言わなければならないと思ったが、結局、気をつけて、という言葉しか出てこなかった。彼女は笑って、うん、と答えた。それから、また連絡するね、と言った。僕は頷いた。彼女の背中が人の流れに紛れていくまで、僕はその場に立っていた。飛行機が出発するまで見送ったわけではない。彼女が搭乗口へ向かっていくのを見届けてから、僕は空港を出た。帰りの電車では、窓の外の景色をぼんやりと眺めていた。時折携帯電話を取り出して、彼女から届いたばかりのメッセージを開き、何度か読み返した。そこには出発前に交わした言葉と変わらない、短い挨拶が書かれていた。</p>
+<p>しかし、時差のある連絡は次第に間遠になった。最初は毎日だったメッセージが週に一度になり、月に一度になった。向こうでの授業や生活のことを聞き、こちらの大学の課題やアルバイトのことを伝えた。写真も何枚か送られてきた。リヨンの街並み、カフェのテーブル、川沿いの風景。写真の隅には見慣れない看板や、読み方のわからない店の名前が写っていた。僕はそれらを眺めながら、彼女が今どんな生活をしているのかあてもなく想像した。写真に写っているカフェで彼女が何を注文したのか、誰と座っていたのか、帰り道にはどんな景色を見たのか。尋ねれば教えてくれたのかもしれない。けれど、そうしたことを一つずつ聞いていくのは、彼女の生活をこちら側から確かめようとしているようで、少し気が引けた。写真に写っているものと、実際に彼女が過ごしている時間とのあいだには、どうしても埋められない距離があった。僕が見ているのは、彼女の生活そのものではなく、彼女がその中から切り取って送ってくれた一部分にすぎなかった。彼女の返事が遅くなっても、僕は催促しなかった。僕のほうも送ろうと思ったメッセージをそのまま下書きに残すことが増えていった。大学では新しい課題が始まり、アルバイトのシフトが入り、友人と食事をすることもあった。彼女のいない生活にも、それなりの予定ができていった。ときどき、彼女に見せようと思って写真を撮ることがあった。大学の近くにできた店や、帰り道に見つけた古本屋の棚。けれど、それを送る頃には、なぜ撮ったのかを自分でもうまく説明できなくなっていた。ただ、ある日気づくと、彼女からの連絡がぷつんと途絶えていて、僕からもメッセージを一切送らなくなっていた。最後にどちらが何を送ったのか、今では正確に思い出せない。最後の会話に、別れを告げるような言葉があったわけでもなかった。誰が悪いわけでもない。ただ、生活が違う方向へと流れていっただけだ。彼女のいる場所には彼女の時間があり、僕のいる場所には僕の時間があった。それだけのことだった。そう、たったそれだけのことのはずだった。</p>
+<p>二〇二六年の春、桜が咲く頃に、一度だけ短いメッセージが届いた。</p>
+<p class="d">『元気？　あの本、まだ持ってる？』</p>
+<p>僕は少し考えてから、返事を打った。</p>
+<p class="d">『持ってる。レシートも、そのまま』</p>
+<p>短い会話だった。既読はついたけれど、返事は来なかった。僕はスマートフォンを机の上に置き、窓の外を眺めた。隣の家の物干しには、洗濯物が風に揺れていた。春の光は部屋の奥まで届いていた。僕はしばらくそのまま座っていたが、やがて本棚からあの文庫本を取り出した。</p>
+<p>レシートは以前と同じページに挟まっていた。</p>
+<p class="rc">店名　A.P.C<br>住所　東京都渋谷区宇田川町15ー1　パルコ2F<br>日付　2021年02月13日（土）12:59<br>商品名　COTON MILITAIRE LAVE<br>単価　¥55,000<br>決済方法　クレジット</p>
+<p>その人は今、どこにいるのだろう、と僕は考えた。今も渋谷の近くに住んでいるのかもしれないし、あるいはフユのようにまったく別の知らない街に住んでいるのかもしれない。あのジャケットはまだクローゼットに残っているだろうか。それとももう処分してしまったのだろうか。この本を売ったのはいつだったのか。どんな気持ちで古本屋に持って行ったのか。あるいは売ったこと自体をもう覚えていないのかもしれない。レシートが挟まったままだったことにも最後まで気づかなかった可能性もある。そう考えると、この小さな紙切れだけが、今もその人から切り離されずに残っているのだ。</p>
+<p>レシートはまだ手元にある。紙は少し柔らかくなり、端も少し丸くなったが、印字は今でも読める。二〇二一年二月十三日、土曜日、十二時五十九分。A.P.C。COTON MILITAIRE LAVE。五万五千円。クレジット。そこには、ただそれだけが記録されている。名前も、顔も知らない誰かが、ある土曜日に渋谷で服を買い、そのあとこの本を読んでいた。そして栞に、レシートを用いた。その事実だけで、世界は今以上にクリアに見えた。秋の夕方や、雨が降り出す少し前みたいな時間に、僕はたまにその本を本棚から取り出すのだろう。そしてレシートを眺めながら、その人のことを考えるのだろう。</p>
+</section>
+
+<section class="chap"><div class="no">XI</div><h2>洗われた、というアカウント</h2>
+<p>ふたつ目の短編の最後で、物語の主人公はこんなことを考える。</p>
+<p>もしあの人と三十分だけでも話せたなら、その人がどこから来て、どこへ向かおうとしていたのかを聞いてみたかった、と。好きな季節や、朝によく飲むものや、どんな音楽を聴くのか知りたかった、と。そしてあの晴れた朝に、偶然すれ違うに至った運命の経緯のようなものを解き明かしてみたい、と。もちろん、これは架空の話だ。でも僕はその文章を、どうしてもレシートの誰かに重ねずにはいられなかった。</p>
+<p>もし三十分だけでも話せたなら、と僕は思う。どこから来て、どこへ向かっていたのか。どんな部屋に住み、朝には何を飲むのか。休日には何をして過ごすのか。どうしてあの日、渋谷パルコでジャケットを買い、そのレシートをこの本へ挟んだのか。そしてあの古本屋で僕がこの本を手にとるに至った運命の経緯のようなものを解き明かしてみたい。もちろん、その人に出会うことは、今後一生ないのかもしれない。一枚の小さなレシートから特定の誰かを探し当てるなんて、現実的にはほとんど不可能だ。でも、その人は確かに存在していた。この本を読み、途中でページを閉じ、レシートを挟んだ。そのことだけはこの小さな紙が確かに証明している。僕はそれで十分だと思った。あの本は今も本棚にある。レシートもまだ同じページに挟まっている。そして僕はこれからも、ときどきその本を開いて、名前も知らない誰かのことを少しだけ考えるのだと思う。悪くない、と思った。悪くない人生だ、と思った。そして願わくば、その人生の最果てに、レシートを栞にした誰かと出会えたなら、それ以上に幸運なことはないのかもしれない。僕はレシートを本に挟み、そっと閉じた。するとちょうどそのとき、机の上のスマートフォンが短く震えた。画面にはインスタグラムのフォロー申請が届いていた。画面をスワイプして、インスタグラムを開くと、そこにはアカウントからのフォロー申請が表示されていた。アカウントのタイムラインを遡っていくと、ふと目に止まる写真があった。二〇二一年二月十三日に投稿された一枚の写真。それはカーキ色のジャケットを纏う女性の後ろ姿の写真だった。僕は目を見張り、ほとんど反射的に、画面をスクロールしてアカウント名を見つめた。そこにはたった一行、こう書かれていた。</p>
+<p class="line">ジェラール・フィリップは洗われた、と。</p>
+<p>そのアカウントをしばらく眺めていた。プロフィールには何も書かれていなかった。投稿も数枚足らずで、フォローしている人数も、フォロワーの数もごくわずかだった。アイコンには何も設定されておらず、名前のほかにその人について知る手がかりはなかった。二〇二一年二月十三日の写真には、カーキ色のジャケットを着た女性が写っていた。顔は見えない。肩まで伸びた髪が背中にかかり、片方の手には小さな紙袋を提げていた。写真の背景には見覚えのある建物の壁面があった。渋谷パルコだった。投稿された時間は十三時二十七分。レシートに記された買い物から、三十分も経っていない。</p>
+<p>僕は写真を、何度も拡大した。ジャケットの襟元や袖口、背中にできた細かな皺を見た。COTON MILITAIRE LAVE。洗いをかけた、軍用コットン。レシートに記されていた商品名が、初めて具体的な衣服として目の前に現れた。もちろん、それだけで同じ人物だと断定できるわけではない。たまたま同じ日に同じ場所で、同じような色のジャケットを着ていた別の誰かかもしれない。そもそも写真の女性が買ったものなのか、誰かから借りたものなのかさえわからない。けれど僕にはもう、それを偶然として片づけることができなかった。何よりジェラール・フィリップは洗われた、というアカウント名。その存在が僕の胸の鼓動を高鳴らせ、喉をからからに乾かせた。僕は一度画面を閉じた。それからもう一度開いた。アカウント名を読み、写真を見て、プロフィールに戻る。その繰り返しだった。しばらくして、フォロー申請を承認した。すると、すぐにメッセージが届いた。</p>
+<p class="d">『こんばんは。突然すみません。フォローありがとうございます』</p>
+<p>僕は返信欄を開いたまま、しばらく何も打てなかった。何と返せばいいのだろう。あなたがあの日、五万五千円のジャケットを買った人なのですか、と尋ねるのはあまりにも唐突だった。馬鹿げている。それにレシートを持っている、と言えば、相手はきっと困惑するだろう。僕は一度文章を打ち、消した。もう一度打ち、また消した。結局、短く返した。</p>
+<p class="d">『こちらこそ。以前から、あなたのことが気になっていました』</p>
+<p>送信してから、おかしな文章だったと思った。これじゃまるで昔からの知り合いに送るような言い方だった。けれど、相手はすぐに返事をくれた。</p>
+<p class="d">『そう言ってもらえると嬉しいです。実は、少しお話ししてみたいと思っていました』</p>
+<p>そのあと、いくつかメッセージを交わした。僕たちは互いの名前を尋ね、住んでいる場所を教え合った。彼女は現在、東京に住んでいるらしかった。仕事のことや休日の過ごし方についても、少しだけ話した。僕は大学を卒業してからも東京に残っていることを伝えた。彼女は本を読むのが好きなのだと言った。僕が古い小説をよく読むと答えると、彼女も最近、昔読んだ短編集を読み返しているところだと教えてくれた。会話は不思議なくらい自然に続いた。僕は相手の文章を読みながら、その人がどんな声で話すのかを想像していた。年齢も、顔も、詳しい生活も知らない。それなのに、僕の中では少しずつ、『ジェラール・フィリップは洗われた』というアカウントの先にある人物の輪郭を持ちはじめていた。</p>
+</section>
+
+<section class="chap"><div class="no">XII</div><h2>渋谷、十二時五十九分</h2>
+<p>何日か経った頃、彼女から一通のメッセージが届いた。</p>
+<p class="d">『よかったら今度、渋谷のカフェでお茶でもしませんか』</p>
+<p>僕はその文章を何度か読み返した。渋谷。あの日と同じ場所だった。二〇二一年二月十三日、土曜日、十二時五十九分。A.P.C。五万五千円。</p>
+<p class="d">『ぜひ』</p>
+<p>僕は間髪を入れず、そう返した。日程を決めるまでに、それほど時間はかからなかった。彼女の都合に合わせて、翌週の土曜日に会うことになった。待ち合わせ場所は渋谷パルコの前、時間は十三時だった。カフェの場所は会ってから決めようということになった。約束の日まで、僕は何度かレシートを取り出した。文庫本の同じページに挟まれていた紙片は、以前よりもさらに柔らかくなっていた。印字された文字は、まだ読める。僕はそれを指先で伸ばし、日付と金額を確かめた。二〇二一年から、もう何年も経っていた。あのときの僕は高校生で、今は大学を卒業している。フユと出会い、一緒に暮らし、そして離れた。あの頃には想像もできなかった生活を、僕はそれなりに過ごしてきた。けれど、この紙切れだけはずっと同じ場所にあった。</p>
+<p>土曜日はよく晴れていた。僕は約束の時間より少し早く渋谷に着いた。駅からパルコへ向かう道には、休日を過ごす人たちが絶えず行き交っていた。交差点では信号が変わるたびに人の流れが入れ替わり、店の前には買い物袋を提げた人たちが立ち止まっていた。ビルの窓には春の光が反射していた。僕は歩道の端に立ち、腕時計を確認した。まだ待ち合わせの時間には十分ほどあった。渋谷パルコの建物を見上げた。何度も想像してきた場所だった。高校生の頃、レシートの住所を読みながら頭のなかに描いていた景色が、今は目の前にあった。もちろん、想像していたものとは少し違っていた。建物の外壁も、行き交う人の服装も、道路の向こうに見える景色も、記憶のなかで作り上げていたものとは違っていた。それでも、ここに誰かがいたのだと思った。あの日、十二時五十九分に会計を済ませ、ジャケットを受け取り、紙袋を持ってこの場所を歩いていた誰かが。僕はスマートフォンを取り出し、彼女とのメッセージを開いた。最後に届いていたのは、もうすぐ着きます、という短い連絡だった。時計を見ると、十二時五十八分だった。信号が青に変わり、人の波が動き出す。僕は無意識のうちに、その流れの中の一人ひとりの顔を目で追っていた。コートを脱いだ人たち、薄手のシャツの袖をまくった人たち。春の装いの群れのなかで、ひとつだけ、色が違った。カーキ色。少し丈の短い洗いのかかったミリタリージャケット。襟元は柔らかく落ち、袖口には何度も腕を通したことを思わせる自然な皺が寄っている。その人は横断歩道を渡り切り、広場の入口で一度足を止めた。それから、静かにこちらを向いた。髪はひとつに束ねられていなかった。肩のあたりで切りそろえられた髪が、風に少しだけ揺れていた。間違いない。フユだった。</p>
+<p>四年の時間が、彼女の輪郭を少しだけ変えていた。頬のあたりが細くなり、目元には、僕の知らない街の光を見てきた人の静けさがあった。けれど、こちらを見て目を細めたときの表情は、あの学食の窓際で、ストローをかき混ぜていた彼女と同じだった。僕は、何も言えなかった。フユはゆっくりと歩いてきた。急ぐでもなく、ためらうでもなく、まるで毎週ここで待ち合わせていたかのような、軽快な足取りだった。僕の前で立ち止まると、彼女は少しだけ首を傾げ、僕の顔を、目元のあたりをじっと見た。春の陽光が、彼女の肩に落ちていた。ジャケットの生地が、光を吸って柔らかく色を変えた。五万五千円の、洗われたコットン。誰かが二〇二一年の土曜日の昼下がりに買い、そのあと本を読み、レシートを栞にした、あのジャケット。</p>
+<p class="d">「ずっと……」</p>
+<p>僕が言いかけると、彼女は小さく首を振った。</p>
+<p class="d">「いいの。今は、まだ」</p>
+<p>それから、あのときと同じように、何かを無理に伝えようとしない声で言った。</p>
+<p class="d">「ほんとはね、あのレシート、栞にするつもりじゃなかったの。ただ、近くにあったから挟んだだけ。だから本を売ったときも、気づかなかった」</p>
+<p class="d">「うん」</p>
+<p class="d">「古本屋の棚でね、リヨンに発つ前の日に、一度だけ見に行ったの。そこにまだあるかなって。なかったけど」</p>
+<p>彼女は少し笑った。</p>
+<p class="d">「あなたの部屋の本棚で見つけたとき、すぐにわかった。この本、わたしのだって。でも、言えなかった。言ったら、何かが変わるような気がして」</p>
+<p>僕は手のひらにレシートがないことを、はじめて少し寂しく思った。それから、すぐに思い直した。あれは、今も本棚の同じページにあるのだ、と。</p>
+<p class="d">「ジェラール・フィリップに似てるって言ったの、覚えてる？」</p>
+<p>彼女が訊いた。</p>
+<p class="d">「覚えてる。調べても、わからなかった」</p>
+<p class="d">「そのうちわかるって、わたし言ったでしょう」</p>
+<p class="d">「言ったね」</p>
+<p class="d">「あのね」</p>
+<p>フユは一度、視線を足元に落とし、それから顔を上げた。</p>
+<p class="d">「三十六歳で死んだ人でしょう、あの人。でも映画の中では、ずっとあの顔で、あの声で、生きてる。会ったこともない人が何十年経っても誰かの記憶のなかで、ちゃんと生きてる。あなたが誰かを思い続けていたのも、きっとそういうことなんだって思ったの。そのとき、直感で──」</p>
+<p>僕はようやく確信した。信号の音が、遠くで鳴っていた。春の風が、広場を斜めに抜けていく。フユは少しだけ背筋を伸ばして、僕を見た。</p>
+<p class="d">「ジェラール・フィリップは現れたね、ちゃんと」</p>
+<p>カーキ色の袖が、風に揺れていた。陽の光のなかで、彼女の言葉は凛として澄んでいた。あの日から、どれくらいの時間が経っただろう。どれほどの想いが胸にあふれ、やがてついえていっただろう。しかしそれでもついえなかった想いは、確かにあった。消えずに、灯り続けた想いがあった。きっと今なら胸を張って、その想いを伝えられるはずだ。何度も迷い、戸惑い、そして心に閉ざしてきたあの言葉を、今なら、きっと──。</p>
+<p>運命の予感をたっぷりと含んだ空気を、胸いっぱいに吸い込む。そして僕は在りし日の記憶を告げるように、そっと口を開く。</p>
+<p class="fin">──ジェラール・フィリップは洗われた、と。</p>
+</section>
+
+</article>
+</div>
+
+<aside class="stage" aria-hidden="true"><div class="canvas" id="canvas"></div></aside>
+</div>
+
+<section class="gal" id="gallery">
+  <h2>The Gallery<br>of Small Things</h2>
+  <div class="grid" id="grid"></div>
+</section>
+</main>
+
+<footer><span data-edit="footer">SYNAPTIC ARCHIVE</span><a href="#top">TOP ↑</a></footer>
+
+<div class="login" id="login" role="dialog" aria-label="管理者ログイン">
+  <div class="lb">
+    <button class="x" type="button" onclick="closeLogin()">CLOSE ✕</button>
+    <h4>Administrator</h4>
+    <input id="lmail" type="email" placeholder="メールアドレス" autocomplete="username">
+    <input id="lpass" type="password" placeholder="パスワード" autocomplete="current-password">
+    <button class="go" id="lgo" type="button">LOGIN</button>
+    <div class="msg" id="lmsg"></div>
+  </div>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="box" id="mbox"><button onclick="document.getElementById('modal').classList.remove('open')">CLOSE ✕</button><h4 id="mh"></h4><p id="mp"></p></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const G={
+ dawn:'linear-gradient(160deg,#d9ccb4 0%,#8a7358 55%,#3b2a20 100%)',
+ slate:'linear-gradient(200deg,#8e98a3 0%,#4d5663 60%,#262c35 100%)',
+ amber:'radial-gradient(circle at 70% 30%,#d8a86a 0%,#8b5e3c 40%,#2f2018 100%)',
+ night:'linear-gradient(180deg,#2a3140 0%,#161a23 100%)',
+ steam:'radial-gradient(circle at 30% 70%,#e7dcc6 0%,#a99478 45%,#4a3a2d 100%)',
+ ember:'radial-gradient(circle at 50% 80%,#c0602b 0%,#5a2c18 45%,#1a0f0a 100%)',
+ khaki:'linear-gradient(150deg,#b9b07d 0%,#7d7650 50%,#2f2f1e 100%)',
+ paper:'linear-gradient(170deg,#efe8da 0%,#b8a98c 55%,#5e4e3a 100%)'
+};
+const S=[
+ {k:'Somewhere in the world',t:'Hush',c:'名前も顔も知らない誰かに、思いを馳せる。',g:G.dawn,n:'序'},
+ {k:'Lavé',t:'Wash',c:'黒板に書かれた過去分詞。洗われた、という意味。',g:G.slate,n:'洗'},
+ {k:'The window seat',t:'Warm',c:'学食の窓際。ストローが氷に触れる小さな音。',g:G.steam,n:'窓'},
+ {k:'Gérard Philipe',t:'Resemblance',c:'三十六歳で死んだ俳優。似ているかどうかは、わからない。',g:G.night,n:'影'},
+ {k:'Two of everything',t:'Domestic',c:'二人分の食器、黒いヘアゴム、共有のマグカップ。',g:G.paper,n:'棲'},
+ {k:'Embers',t:'Remains',c:'消えないまま燻り続ける、胸の奥の残火。',g:G.ember,n:'火'},
+ {k:'Nabe, November',t:'Confession',c:'曇った窓。滑り落ちる一枚のレシート。',g:G.steam,n:'鍋'},
+ {k:'The second floor',t:'Dust & light',c:'急な階段、乾いた紙の匂い、AMラジオのざらつき。',g:G.amber,n:'階'},
+ {k:'12:59',t:'Receipt',c:'ある土曜日の、ある店の、ある金額。',g:G.paper,n:'票'},
+ {k:'Lyon',t:'Distance',c:'時差、絆創膏、間遠になるメッセージ。',g:G.slate,n:'離'},
+ {k:'13:27',t:'Signal',c:'カーキ色の後ろ姿。アカウント名がすべてを告げる。',g:G.khaki,n:'信'},
+ {k:'Shibuya, again',t:'Convergence',c:'春の風、横断歩道、色だけが違う一人。',g:G.khaki,n:'再'}
+];
+const cv=document.getElementById('canvas');
+const esc=v=>String(v).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nl=v=>esc(v).replace(/\n/g,'<br>');
+const RC_DEF=`<b>A.P.C</b>渋谷区宇田川町15-1 パルコ2F<hr>2021/02/13（土）12:59<br>COTON MILITAIRE LAVE<br>単価 ¥55,000<hr>決済 クレジット`;
+let scenes=[],cur=-1;
+function buildScenes(){
+  cv.innerHTML='';
+  S.forEach((s,i)=>{const d=document.createElement('div');d.className='scene';d.style.setProperty('--g',s.g);
+   d.innerHTML=`<div class="big" data-s="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-s="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-s="t">${esc(s.t)}</span></div><div class="kw" data-s="k">${nl(s.k)}</div><div class="cap" data-s="c">${nl(s.c)}</div>`;cv.appendChild(d)});
+  scenes=[...cv.children];
+  const k=cur;cur=-1;setScene(k<0?0:k);
+  syncDoors();
+}
+/* モバイル用の章扉：各章の冒頭に、対応する場面をカードとして差し込む */
+function syncDoors(){
+  document.querySelectorAll('#prose .chap').forEach((c,i)=>{
+    const old=c.querySelector(':scope>.door');if(old)old.remove();
+    const s=S[i];if(!s)return;
+    const d=document.createElement('div');d.className='door';d.dataset.i=i;d.style.setProperty('--g',s.g);
+    d.innerHTML=`<div class="big" data-d="n">${esc(s.n)}</div>${s.r?`<div class="rcpt" data-d="rh">${s.rh||RC_DEF}</div>`:''}<div class="tone">${String(i+1).padStart(2,'0')} · <span data-d="t">${esc(s.t)}</span></div><div class="kw" data-d="k">${nl(s.k)}</div><div class="cap" data-d="c">${nl(s.c)}</div>`;
+    if(document.body.classList.contains('editing'))d.querySelectorAll('[data-d]').forEach(el=>{el.setAttribute('contenteditable','true');el.spellcheck=false});
+    c.insertBefore(d,c.firstChild);
+    (window._dio=window._dio||new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');window._dio.unobserve(e.target)}}),{threshold:.3})).observe(d);
+  });
+}
+function setScene(i){if(i===cur)return;cur=i;scenes.forEach((e,j)=>e.classList.toggle('on',j===i))}
+buildScenes();
+const prose=document.getElementById('prose');
+const po=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');po.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'});
+function watchProse(){prose.querySelectorAll('p').forEach(p=>po.observe(p))}
+watchProse();
+function chapterIndex(){
+  const line=innerHeight*0.4;let idx=0;
+  document.querySelectorAll('#prose .chap').forEach((c,i)=>{if(c.getBoundingClientRect().top<=line)idx=i});
+  return idx;
+}
+function progress(){const r=prose.getBoundingClientRect();const span=r.height-innerHeight*0.35;return Math.min(1,Math.max(0,(innerHeight*0.5-r.top)/Math.max(span,1)))}
+let raf=0;
+function onScroll(){if(raf)return;raf=requestAnimationFrame(()=>{raf=0;setScene(Math.min(S.length-1,chapterIndex()));const h=document.documentElement;document.getElementById('bar').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%'})}
+addEventListener('scroll',onScroll,{passive:true});
+addEventListener('resize',onScroll);
+onScroll();
+/* gallery */
+const gi=[0,1,3,5,7,10,11];const gr=document.getElementById('grid');
+function buildGallery(){gr.innerHTML='';gi.forEach((n,k)=>{const s=S[n];const b=document.createElement('button');b.className='card c'+(k+1);b.style.setProperty('--g',s.g);
+ b.innerHTML=`<span><small>${String(n+1).padStart(2,'0')} · ${esc(s.t.toUpperCase())}</small><i>${nl(s.k)}</i></span>`;
+ b.onclick=()=>{document.getElementById('mbox').style.setProperty('--g',s.g);document.getElementById('mh').textContent=s.k;document.getElementById('mp').textContent=s.c;document.getElementById('modal').classList.add('open')};
+ gr.appendChild(b)})}
+buildGallery();
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeLogin();document.getElementById('modal').classList.remove('open')}});
+let fs=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--fs'))||16;function sz(d){fs=Math.min(26,Math.max(12,fs+d*2));document.documentElement.style.setProperty('--fs',fs+'px')}
+
+/* ---------- Firebase ---------- */
+/* Firebaseコンソール → プロジェクトの設定 → マイアプリ(ウェブ) の構成値に置き換えてください */
+const FB_CONFIG={apiKey:"AIzaSyAQOzsk4uUWRGX5TagfCQ2-tJ_FGv15RIc",authDomain:"lave-ba4a9.firebaseapp.com",projectId:"lave-ba4a9",storageBucket:"lave-ba4a9.firebasestorage.app",messagingSenderId:"908000959840",appId:"1:908000959840:web:21f7d4fe46be2574511205"};
+let auth=null,db=null,TEXT_DOC=null;
+try{
+  if(typeof firebase==='undefined')throw new Error('Firebase SDK not loaded');
+  firebase.initializeApp(FB_CONFIG);
+  auth=firebase.auth();db=firebase.firestore();
+  TEXT_DOC=db.collection('site').doc('text');
+}catch(err){console.warn('Firebase を利用できません（閲覧のみ可能）:',err)}
+
+/* admins コレクションに「小文字のメールアドレス」のドキュメントがあるか */
+async function isAdminUser(u){
+  if(!db||!u||!u.email)return false;
+  try{return (await db.collection('admins').doc(u.email.toLowerCase()).get()).exists}
+  catch(e){return false}
+}
+
+/* ---------- 管理モード: タイトルを5回タップ ---------- */
+const EDIT_SEL='[data-edit]';
+const ebar=document.createElement('div');ebar.id='editor';
+const est=document.createElement('span');est.className='st';
+const bAdd=document.createElement('button');bAdd.textContent='＋章を追加';
+const bSave=document.createElement('button');bSave.className='primary';bSave.textContent='保存';
+const bCancel=document.createElement('button');bCancel.textContent='やめる';
+const bOut=document.createElement('button');bOut.textContent='ログアウト';
+const bClose=document.createElement('button');bClose.textContent='閉じる';
+ebar.append(est,bAdd,bSave,bCancel,bOut,bClose);document.body.appendChild(ebar);
+function say(t){est.textContent=t}
+function editables(on){
+  document.querySelectorAll(EDIT_SEL).forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
+  prose.querySelectorAll('h2,p').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
+  document.querySelectorAll('.scene [data-s],.door [data-d]').forEach(el=>{if(on){el.setAttribute('contenteditable','true');el.spellcheck=false}else el.removeAttribute('contenteditable')});
+}
+const CH_SEL='#prose .chap';
+const ROMAN=[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+function roman(n){let s='';for(const[v,r]of ROMAN){while(n>=v){s+=r;n-=v}}return s||'I'}
+function renumber(){document.querySelectorAll(CH_SEL).forEach((c,i)=>{const no=c.querySelector('.no');if(no)no.textContent=roman(i+1)})}
+function decorate(){
+  document.querySelectorAll(CH_SEL).forEach(c=>{
+    if(c.querySelector('.chdel'))return;
+    const b=document.createElement('button');b.type='button';b.className='chdel';b.textContent='この章を削除';
+    b.onclick=()=>{
+      if(document.querySelectorAll(CH_SEL).length<=1){say('最後の一章は削除できません');return}
+      if(!confirm('この章を削除しますか？'))return;
+      c.remove();renumber();syncDoors();say('章を削除しました（保存で確定）');
+    };
+    c.insertBefore(b,c.firstChild);
+  });
+}
+function undecorate(){document.querySelectorAll('.chdel').forEach(b=>b.remove())}
+function addChapter(){
+  const s=document.createElement('section');s.className='chap';
+  s.innerHTML='<div class="no"></div><h2>新しい章</h2><p>本文を入力してください。</p>';
+  prose.appendChild(s);renumber();syncDoors();decorate();watchProse();
+  const h=s.querySelector('h2');h.setAttribute('contenteditable','true');h.spellcheck=false;h.focus();
+  say('章を追加しました（保存で確定）');
+}
+function collect(){
+  const o={};
+  document.querySelectorAll(EDIT_SEL).forEach(el=>{o[el.dataset.edit]=el.innerHTML});
+  o.chapters=[...document.querySelectorAll(CH_SEL)].map(c=>({
+    title:cleanHTML((c.querySelector('h2')||{}).innerHTML||''),
+    paragraphs:[...c.querySelectorAll('p')].map(p=>({cls:p.className.replace(/\bin\b/g,'').replace(/\s+/g,' ').trim(),html:cleanHTML(p.innerHTML)}))
+  }));
+  o.scenes=scenes.map(d=>{
+    const i=scenes.indexOf(d);
+    const g=k=>{const e=d.querySelector(`[data-s="${k}"]`);const t=e?elText(e).trim():'';return t||(S[i]&&S[i][k])||''};
+    const r=d.querySelector('[data-s="rh"]');
+    const v={k:g('k'),c:g('c'),t:g('t'),n:g('n')};
+    if(r)v.rh=r.innerHTML;
+    return v;
+  });
+  return o;
+}
+function elText(el){
+  let out='';
+  const walk=n=>n.childNodes.forEach(c=>{
+    if(c.nodeType===3)out+=c.nodeValue;
+    else if(c.nodeName==='BR')out+='\n';
+    else{if(/^(DIV|P)$/.test(c.nodeName)&&out&&!out.endsWith('\n'))out+='\n';walk(c)}
+  });
+  walk(el);return out.replace(/\u00a0/g,' ').replace(/\n+$/,'');
+}
+function applyScenes(list,rebuild){
+  if(!Array.isArray(list))return;
+  list.slice(0,S.length).forEach((v,i)=>{['k','c','t','n'].forEach(f=>{if(v&&v[f])S[i][f]=v[f]});if(v&&v.rh)S[i].rh=v.rh});
+  if(rebuild){buildScenes();if(document.body.classList.contains('editing'))editables(true)}
+  syncDoors();
+  buildGallery();
+}
+/* 保存済みデータに、最新の構成変更（第XIII章の統合・第X/XI章の段落移動）を優先して適用する。何度適用しても結果は同じ */
+const END_P=[
+ {cls:'',html:'カーキ色の袖が、風に揺れていた。陽の光のなかで、彼女の言葉は凛として澄んでいた。あの日から、どれくらいの時間が経っただろう。どれほどの想いが胸にあふれ、やがてついえていっただろう。しかしそれでもついえなかった想いは、確かにあった。消えずに、灯り続けた想いがあった。きっと今なら胸を張って、その想いを伝えられるはずだ。何度も迷い、戸惑い、そして心に閉ざしてきたあの言葉を、今なら、きっと──。'},
+ {cls:'',html:'運命の予感をたっぷりと含んだ空気を、胸いっぱいに吸い込む。そして僕は在りし日の記憶を告げるように、そっと口を開く。'},
+ {cls:'fin',html:'──ジェラール・フィリップは洗われた、と。'}
+];
+const MOVE_P=[
+ {cls:'',html:'その人は今、どこにいるのだろう、と僕は考えた。今も渋谷の近くに住んでいるのかもしれないし、あるいはフユのようにまったく別の知らない街に住んでいるのかもしれない。あのジャケットはまだクローゼットに残っているだろうか。それとももう処分してしまったのだろうか。この本を売ったのはいつだったのか。どんな気持ちで古本屋に持って行ったのか。あるいは売ったこと自体をもう覚えていないのかもしれない。レシートが挟まったままだったことにも最後まで気づかなかった可能性もある。そう考えると、この小さな紙切れだけが、今もその人から切り離されずに残っているのだ。'},
+ {cls:'',html:'レシートはまだ手元にある。紙は少し柔らかくなり、端も少し丸くなったが、印字は今でも読める。二〇二一年二月十三日、土曜日、十二時五十九分。A.P.C。COTON MILITAIRE LAVE。五万五千円。クレジット。そこには、ただそれだけが記録されている。名前も、顔も知らない誰かが、ある土曜日に渋谷で服を買い、そのあとこの本を読んでいた。そして栞に、レシートを用いた。その事実だけで、世界は今以上にクリアに見えた。秋の夕方や、雨が降り出す少し前みたいな時間に、僕はたまにその本を本棚から取り出すのだろう。そしてレシートを眺めながら、その人のことを考えるのだろう。'}
+];
+function migrateChapters(src){
+  const chs=src.map(c=>({title:c.title||'',paragraphs:(c.paragraphs||[]).map(p=>({cls:p.cls||'',html:p.html||''}))}));
+  const plain=h=>String(h).replace(/<[^>]*>/g,'').trim();
+  const find=(re,fb)=>{const i=chs.findIndex(c=>re.test(plain(c.title)));return i>=0?i:(chs.length>=12?fb:-1)};
+  /* ① 旧・第XIII章を取り除き、第XII章の結びを最新の文章にする */
+  const iL=chs.findIndex(c=>plain(c.title)==='洗われた、と');
+  if(iL>=0)chs.splice(iL,1);
+  const iS=find(/渋谷、十二時五十九分/,11);
+  if(iS>=0){
+    const ps=chs[iS].paragraphs;
+    if(!ps.some(p=>plain(p.html).startsWith('カーキ色の袖が、風に揺れていた')))END_P.forEach(p=>ps.push({...p}));
+  }
+  /* ② 「その人は今、…」「レシートはまだ手元に…」を第X章の末尾へ */
+  const iR=find(/リヨン/,9);
+  if(iR>=0){
+    const keys=['その人は今、どこにいるのだろう','レシートはまだ手元にある'];
+    const moved=keys.map(k=>{
+      let hit=null;
+      chs.forEach((c,ci)=>{if(ci===iR||hit)return;const j=c.paragraphs.findIndex(p=>plain(p.html).startsWith(k));if(j>=0)hit=c.paragraphs.splice(j,1)[0]});
+      return hit;
+    });
+    const tail=chs[iR].paragraphs;
+    keys.forEach((k,n)=>{if(!tail.some(p=>plain(p.html).startsWith(k)))tail.push(moved[n]||{...MOVE_P[n]})});
+  }
+  return chs;
+}
+function applyContent(c){
+  if(!c)return;
+  applyScenes(c.scenes,true);
+  document.querySelectorAll(EDIT_SEL).forEach(el=>{const v=c[el.dataset.edit];if(typeof v==='string'&&v)el.innerHTML=v});
+  if(Array.isArray(c.chapters)&&c.chapters.length){
+    const chs=migrateChapters(c.chapters);
+    prose.innerHTML=chs.map(ch=>`<section class="chap"><div class="no"></div><h2>${ch.title||''}</h2>${(ch.paragraphs||[]).map(p=>`<p class="${p.cls||''}">${p.html||''}</p>`).join('')}</section>`).join('');
+    renumber();syncDoors();watchProse();
+  }
+}
+/* 書式を持ち込まない：貼り付けはプレーンテキスト、太字・斜体などのショートカットも無効 */
+const isEditing=()=>document.body.classList.contains('editing');
+addEventListener('beforeinput',e=>{if(isEditing()&&/^format/.test(e.inputType))e.preventDefault()},true);
+addEventListener('paste',e=>{
+  if(!isEditing())return;
+  const el=e.target.closest&&e.target.closest('[contenteditable="true"]');
+  if(!el)return;
+  e.preventDefault();
+  const raw=((e.clipboardData||window.clipboardData).getData('text/plain')||'').replace(/\r\n?/g,'\n');
+  const fk=el.dataset&&(el.dataset.s||el.dataset.d);
+  if(fk==='rh'||fk==='k'||fk==='c'){
+    document.execCommand('insertHTML',false,esc(raw.replace(/\n+$/,'')).replace(/\n/g,'<br>'));return;
+  }
+  const isBody=el.tagName==='P'&&prose.contains(el);
+  if(!isBody){document.execCommand('insertText',false,raw.replace(/\s*\n+\s*/g,' '));return;}
+  const sel=getSelection();if(!sel.rangeCount)return;
+  const r0=sel.getRangeAt(0);
+  const pre=document.createRange();pre.selectNodeContents(el);pre.setEnd(r0.startContainer,r0.startOffset);
+  const atStart=pre.toString()==='';
+  const lines=raw.split('\n').map(x=>x.replace(/[ \t\u3000]+$/,'')).filter(x=>x.trim().length);
+  if(!lines.length)return;
+  const lead=x=>x.replace(/^[\s\u3000]+/,'');
+  const first=(atStart||lines.length>1)?lead(lines[0]):lines[0];
+  document.execCommand('insertText',false,first);
+  if(lines.length===1)return;
+  const r1=getSelection().getRangeAt(0);
+  const tail=document.createRange();tail.setStart(r1.endContainer,r1.endOffset);tail.setEnd(el,el.childNodes.length);
+  const frag=tail.extractContents();
+  let prev=el,node=null;
+  lines.slice(1).forEach(ln=>{
+    const t=lead(ln);const np=document.createElement('p');
+    np.className=/^[「『（(]/.test(t)?'d in':'in';
+    np.setAttribute('contenteditable','true');np.spellcheck=false;
+    np.textContent=t;prev.after(np);prev=np;node=np.firstChild;
+  });
+  prev.appendChild(frag);
+  const rr=document.createRange();rr.setStart(node,node.length);rr.collapse(true);
+  const sl=getSelection();sl.removeAllRanges();sl.addRange(rr);
+});
+/* 右側の場面と章扉の編集を相互に同期 */
+addEventListener('input',e=>{
+  const el=e.target.closest&&e.target.closest('[data-s],[data-d]');if(!el)return;
+  const host=el.closest('.scene,.door');if(!host)return;
+  const f=el.dataset.s||el.dataset.d,isDoor=host.classList.contains('door');
+  const i=isDoor?+host.dataset.i:scenes.indexOf(host);
+  if(!(i>=0)||!S[i])return;
+  S[i][f]=f==='rh'?el.innerHTML:elText(el).trim();
+  const other=isDoor?(scenes[i]&&scenes[i].querySelector(`[data-s="${f}"]`)):document.querySelector(`.door[data-i="${i}"] [data-d="${f}"]`);
+  if(other)other.innerHTML=f==='rh'?el.innerHTML:(f==='k'||f==='c')?nl(S[i][f]):esc(S[i][f]);
+});
+/* 保存時：本文・章タイトルに紛れた書式（span/font/style等）を取り除く */
+function cleanHTML(h){
+  const d=document.createElement('div');d.innerHTML=h;
+  d.querySelectorAll('*').forEach(n=>{
+    if(n.tagName==='BR')return;
+    if(n.tagName==='DIV'){n.replaceWith(document.createElement('br'),...n.childNodes)}
+    else n.replaceWith(...n.childNodes);
+  });
+  return d.innerHTML;
+}
+let snap=null;
+function enterEdit(){snap=collect();document.body.classList.add('editing');editables(true);decorate();say('編集モード — 文言・章タイトルをタップして編集');}
+function exitEdit(){document.body.classList.remove('editing');editables(false);undecorate();say('')}
+async function saveEdit(){
+  say('保存中…');
+  try{
+    const data=collect();
+    if(!TEXT_DOC)throw {code:'firebase-unavailable'};
+    await TEXT_DOC.set(data);
+    snap=data;
+    applyScenes(data.scenes,false);
+    say('保存しました（「やめる」で管理パネルを閉じます）');
+  }catch(e){
+    say(e.code==='permission-denied'?'権限がありません。再ログインしてください':'保存できませんでした（'+(e.code||'通信エラー')+'）');
+  }
+}
+function cancelEdit(){applyContent(snap);exitEdit()}
+
+/* ---------- ログイン画面 ---------- */
+const lg=document.getElementById('login'),lmail=document.getElementById('lmail'),lpass=document.getElementById('lpass'),lmsg=document.getElementById('lmsg'),lgo=document.getElementById('lgo');
+function openLogin(){lmsg.textContent='';lpass.value='';lg.classList.add('open');lmail.focus()}
+function closeLogin(){lg.classList.remove('open');lpass.value=''}
+async function doLogin(){
+  const mail=lmail.value.trim().toLowerCase(),pass=lpass.value;
+  if(!mail||!pass){lmsg.style.color='#a33';lmsg.textContent='メールアドレスとパスワードを入力してください';return}
+  if(!auth){lmsg.style.color='#a33';lmsg.textContent='Firebase を読み込めませんでした。通信環境や広告ブロッカー、プレビュー環境の制限をご確認ください';return}
+  lgo.disabled=true;lmsg.style.color='#5B6470';lmsg.textContent='確認中…';
+  try{
+    const cred=await auth.signInWithEmailAndPassword(mail,pass);
+    if(await isAdminUser(cred.user)){
+      closeLogin();enterEdit();
+    }else{
+      await auth.signOut();
+      lmsg.style.color='#a33';lmsg.textContent='このアカウントには管理権限がありません';
+    }
+  }catch(e){
+    console.error(e);
+    lmsg.style.color='#a33';
+    lmsg.textContent=(e.code==='auth/too-many-requests')
+      ?'試行回数が多すぎます。しばらくしてからお試しください'
+      :'ログインできません（'+(e.code||'unknown')+'）';
+  }finally{lgo.disabled=false;lpass.value=''}
+}
+lgo.onclick=doLogin;
+lpass.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+lmail.addEventListener('keydown',e=>{if(e.key==='Enter')lpass.focus()});
+lg.addEventListener('click',e=>{if(e.target===lg)closeLogin()});
+
+bSave.onclick=saveEdit;bCancel.onclick=cancelEdit;bClose.onclick=exitEdit;bAdd.onclick=addChapter;
+bOut.onclick=async()=>{exitEdit();try{if(auth)await auth.signOut()}catch(e){}};
+
+/* タイトル5回タップ → 認証済み管理者なら編集モード、そうでなければログイン画面 */
+let taps=0,tapAt=0;
+const titleEl=document.querySelector('.portal h1');
+titleEl.addEventListener('click',async()=>{
+  const n=Date.now();taps=(n-tapAt<900)?taps+1:1;tapAt=n;
+  if(taps>=5){
+    taps=0;
+    if(auth&&await isAdminUser(auth.currentUser))enterEdit();else openLogin();
+  }
+});
+
+/* 本文の読み込み（Firestoreの公開読み取り） */
+if(TEXT_DOC)TEXT_DOC.get().then(s=>{if(s.exists)applyContent(s.data())}).catch(()=>{});
+</script>
+</body>
+</html>
