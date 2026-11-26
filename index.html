@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 <title>夭折した天使たちへ | To the Angels Gone Too Soon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +12,7 @@
 :root{--paper:#FDFCF8;--ink:#1A1A1A;--bronze:#8B5E3C;--umber:#3B2A20;--slate:#5B6470;--ivory:#EFE8DA;--fs:16px}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
+html,body{touch-action:pan-x pan-y}
 body{background:var(--paper);color:var(--ink);font-family:'Inter','Noto Serif JP',sans-serif;line-height:1.6}
 .serif{font-family:'Playfair Display','Noto Serif JP',serif}
 .jp{font-family:'Noto Serif JP',serif}
@@ -622,7 +623,6 @@ function renderTop(){
     <div class="eyebrow" data-e="eyebrow">${esc(t.eyebrow)}</div>
     <div class="jp-t" data-e="title">${esc(t.title)}</div>
     <h1 data-e="en">${esc(t.en)}</h1>
-    <p class="abs" data-e="abstract">${esc(t.abstract)}</p>
     <button class="enter" type="button" id="enterBtn">ENTER THE ARCHIVE</button></div></header>
   <section class="constel" id="gallery"><div class="eyebrow">THE CONSTELLATION</div><h2>収録作品</h2><ol class="works" id="works"></ol></section>`;
   const vis=DATA.stories.filter(isVisible);
@@ -767,7 +767,7 @@ function collect(){
     OV.meta[id]=m;
   }else{
     OV.top={eyebrow:document.querySelector('[data-e="eyebrow"]').textContent.trim(),title:document.querySelector('[data-e="title"]').textContent.trim(),
-      en:document.querySelector('[data-e="en"]').textContent.trim(),abstract:document.querySelector('[data-e="abstract"]').textContent.trim()};
+      en:document.querySelector('[data-e="en"]').textContent.trim()};
     document.querySelectorAll('[data-w-id]').forEach(li=>{const id=li.dataset.wId;const m={...(OV.meta[id]||{})};
       li.querySelectorAll('[data-w]').forEach(el=>m[el.dataset.w]=el.textContent.trim());OV.meta[id]=m});
   }
@@ -843,6 +843,8 @@ document.addEventListener('click',async e=>{
   tapChapIdx=chapEl?idx:null;
   if(taps>=5)enterAdminFromTap(chapEl?idx:null);
 });
+/* ピンチイン・アウト無効化（iOS Safari対策） */
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
 addEventListener('keydown',e=>{if(e.key==='Escape'){$('login').classList.remove('open');$('modal').classList.remove('open')}});
 /* 保存データを読み込んでから初回描画する（初期画面の一瞬の表示を防ぐ） */
 let LOADED=false;
