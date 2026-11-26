@@ -797,7 +797,7 @@ async function save(){
 /* 本文コピー：章タイトルと本文のみ。空行・文頭一字空けを保つ */
 function formatForCopy(chs){
   return chs.map(c=>{
-    const body=c.paragraphs.map(p=>{const ind=/^[「『（(]/.test(p)?'':'　';return p.split('\n').map((l,i)=>(i===0?ind:'')+l).join('\n')}).join('\n\n');
+    const body=c.paragraphs.map(p=>{const ind=/^[「『（(]/.test(p)?'':'　';return p.split('\n').map((l,i)=>(i===0?ind:'')+l).join('\n')}).join('\n');
     return (c.title?c.title+'\n\n':'')+body;
   }).join('\n\n\n');
 }
